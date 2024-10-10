@@ -72,7 +72,7 @@ ul {
 .info h2 {
     font-size: 2em;
     margin-bottom: 15px;
-    color: #333;
+    /* color: #333; */
 }
 
 .info p {
@@ -82,10 +82,16 @@ ul {
     margin-bottom: 20px;
 }
 
+.indented-paragraph {
+    margin-left: 20px; /* Small indentation for paragraphs */
+}
+
+
+
 .about-content h3 {
     font-size: 1.5em;
     margin-top: 20px;
-    color: #0077cc;
+    /* color: #0077cc; */
 }
 
 .about-content ul {
