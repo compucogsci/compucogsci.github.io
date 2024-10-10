@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reading Club - Schedule</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Computational Cognitive Science Reading Club</h1>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="schedule.html">Schedule</a>
+            </nav>
+        </header>
+
+        <section class="controls">
+            <button onclick="filterPresentations('all')">All Presentations</button>
+            <button onclick="filterPresentations('future')">Future Presentations</button>
+            <button onclick="filterPresentations('past')">Past Presentations</button>
+        </section>
+
+        <table id="presentationsTable">
+            <thead>
+                <tr>
+                    <th onclick="toggleSort()">Date <span id="sortIcon">⬆️</span></th>
+                    <th>Title</th>
+                    <th>Presenter</th>
+                    <th>Summary</th>
+                    <th>Links</th>
+                </tr>
+            </thead>
+            <tbody id="presentations">
+                <!-- Presentations will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
