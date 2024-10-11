@@ -40,7 +40,7 @@ let presentations = [
         "links": [
             {
                 "text": "Paper 1: Dissociating language and thought in large language models",
-                "url": "https://www.cell.com/trends/cognitive-sciences/fulltext/S1364-6613(24)00010-X"
+                "url": "https://www.cell.com/trends/cognitive-sciences/abstract/S1364-6613(24)00027-5"
             },
             {
                 "text": "Paper 2: How language programs the mind",
@@ -48,11 +48,11 @@ let presentations = [
             },
             {
                 "text": "Bonus Paper: The language network as a natural kind within the broader landscape of the human brain",
-                "url": "https://www.nature.com/articles/s41583-024-00588-4"
+                "url": "https://www.nature.com/articles/s41583-024-00802-4"
             },
             {
                 "text": "Bonus Paper: Language and thought are not the same thing: evidence from neuroimaging and neurological patients",
-                "url": "https://nyaspubs.onlinelibrary.wiley.com/doi/full/10.1111/nyas.13047"
+                "url": "https://nyaspubs.onlinelibrary.wiley.com/doi/full/10.1111/nyas.13046?casa_token=XD66qE2Lde0AAAAA%3A5NOw2KOM8xUwI4vHtBv2w49sHzasP4GVSSEz9BqugK3l11613KK1qfwo9JeHwdJ81XyCCBHfX8qeGg"
             }
         ]
     },
@@ -64,15 +64,15 @@ let presentations = [
         "links": [
             {
                 "text": "Paper 1: Machine Theory of Mind",
-                "url": "https://proceedings.mlr.press/v80/rabinowitz18a.html"
+                "url": "http://proceedings.mlr.press/v80/rabinowitz18a.html"
             },
             {
                 "text": "Adjacent Paper: Mind the gap: challenges of deep learning approaches to Theory of Mind",
-                "url": "https://link.springer.com/article/10.1007/s10462-017-9561-7"
+                "url": "https://link.springer.com/article/10.1007/s10462-023-10401-x"
             },
             {
                 "text": "Adjacent Paper: Computational Social Psychology",
-                "url": "https://www.annualreviews.org/doi/abs/10.1146/annurev-psych-010814-015309"
+                "url": "https://www.annualreviews.org/content/journals/10.1146/annurev-psych-021323-040420"
             }
         ]
     },
@@ -84,11 +84,11 @@ let presentations = [
         "links": [
             {
                 "text": "Paper 1: Understanding the development of reward learning through the lens of meta-learning",
-                "url": "https://www.sciencedirect.com/science/article/pii/S1364661323000493"
+                "url": "https://www.nature.com/articles/s44159-024-00304-1"
             },
             {
                 "text": "Bonus Paper: Parental presence switches avoidance to attraction learning in children",
-                "url": "https://www.nature.com/articles/s41562-019-0619-4"
+                "url": "https://www.nature.com/articles/s41562-019-0656-9"
             }
         ]
     },
@@ -100,10 +100,9 @@ let presentations = [
         "links": [
             {
                 "text": "Paper 1: Empowerment contributes to exploration behaviour in a creative video game",
-                "url": "https://www.nature.com/articles/s41562-023-01614-8"
+                "url": "https://www.nature.com/articles/s41562-023-01661-2"
             }
         ],
-        "announcements": "Looking for presenters this fall! Don’t forget to RSVP so we know how much food to order! Take attendance. Looking for funding, potentially through the psych grad student activities fund."
     },
     {
         "title": "Generative replay in hippocampus",
@@ -113,7 +112,7 @@ let presentations = [
         "links": [
             {
                 "text": "Paper 1: Generative replay underlies compositional inference in the hippocampal-prefrontal circuit",
-                "url": "https://www.sciencedirect.com/science/article/pii/S1364661323000119"
+                "url": "https://www.sciencedirect.com/science/article/pii/S0092867423010255"
             }
         ]
     },
@@ -125,7 +124,7 @@ let presentations = [
         "links": [
             {
                 "text": "Paper 1: Rise and fall of technological development in virtual communities",
-                "url": "https://arxiv.org/abs/2301.02137"
+                "url": "https://osf.io/preprints/psyarxiv/tz4dn"
             }
         ]
     },
@@ -137,7 +136,7 @@ let presentations = [
         "links": [
             {
                 "text": "Paper 1: Meta-learned models of cognition",
-                "url": "https://arxiv.org/abs/2301.02564"
+                "url": "https://www.cambridge.org/core/journals/behavioral-and-brain-sciences/article/metalearned-models-of-cognition/F95059E07AE6E82AE56C4164A5384A18"
             }
         ]
     },
