@@ -144,7 +144,7 @@ let presentations = [
         "title": "Getting Aligned on Representational Alignment",
         "presenter": "Linas Nasvytis, Alexa Tartaglini",
         "date": "2024-10-29",
-        "summary": "What is representational alignment, how have different fields approached the topic, and what are the outstanding problems in the unified field?",
+        "summary": "What is representational alignment, how have different fields approached the topic, and what are the outstanding problems in the unified field? Only read Sections 1, 2.1, 4.1, 4.3, and 5. The rest is optional.",
         "links": [
             {
                 "text": "Paper 1: Getting Aligned on Representational Alignment",
