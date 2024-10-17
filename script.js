@@ -141,28 +141,33 @@ let presentations = [
         ]
     },
     {
-        "title": "[Topic]",
-        "presenter": "Emily Chen",
-        "date": "2024-10-22",
-        "summary": "",
-        "links": []
+        "title": "Getting Aligned on Representational Alignment",
+        "presenter": "Linas Nasvytis, Alexa Tartaglini",
+        "date": "2024-10-29",
+        "summary": "What is representational alignment, how have different fields approached the topic, and what are the outstanding problems in the unified field?",
+        "links": [
+            {
+                "text": "Paper 1: Getting Aligned on Representational Alignment",
+                "url": "https://arxiv.org/abs/2310.13018"
+            }
+        ]
     },
     {
-        "title": "[Topic]",
+        "title": "[Topic TBD]",
         "presenter": "Junyi Chu",
-        "date": "2024-11-05",
+        "date": "2024-11-12",
         "summary": "",
         "links": []
     },
     {
-        "title": "[Topic]",
+        "title": "[Topic TBD]",
         "presenter": "Jerome Han",
         "date": "2024-11-19",
         "summary": "",
         "links": []
     },
     {
-        "title": "[Language topic]",
+        "title": "[Topic TBD (language related)]",
         "presenter": "Irmak Ergin",
         "date": "2024-12-03",
         "summary": "",
