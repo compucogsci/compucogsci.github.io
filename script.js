@@ -184,7 +184,8 @@ let ascending = true;
 const today = new Date().toISOString().split("T")[0];
 
 window.onload = function() {
-    displayPresentations(presentations);
+    filterPresentations("future");
+    //displayPresentations(presentations);
 };
 
 function displayPresentations(list) {
