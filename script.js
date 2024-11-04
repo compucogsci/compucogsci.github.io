@@ -153,11 +153,15 @@ let presentations = [
         ]
     },
     {
-        "title": "[Topic TBD]",
+        "title": "The affective gradient hypothesis",
         "presenter": "Junyi Chu",
         "date": "2024-11-12",
-        "summary": "",
-        "links": []
+        "summary": "A trends in cogsci paper offering a solution to the puzzle of \"where do values and goals come from?\"",
+        "links": [{
+                "text": "Paper 1: The affective gradient hypothesis: an affect-centered account of motivated behavior",
+                "url": "https://static1.squarespace.com/static/56e19a6d04426223be32a8b9/t/66fe22de0dea8f6ac730cff3/1727931104942/Shenhav_inPress_TiCS.pdf"
+            }
+        ]
     },
     {
         "title": "[Topic TBD]",
