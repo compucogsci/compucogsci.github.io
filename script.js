@@ -164,19 +164,19 @@ let presentations = [
         ]
     },
     {
-        "title": "[Topic TBD]",
-        "presenter": "Jerome Han",
-        "date": "2024-11-19",
-        "summary": "",
-        "links": []
-    },
-    {
         "title": "[Topic TBD (language related)]",
         "presenter": "Irmak Ergin",
         "date": "2024-12-03",
         "summary": "",
         "links": []
     }
+    {
+        "title": "[Topic TBD]",
+        "presenter": "Jerome Han",
+        "date": "2025-01-14",
+        "summary": "",
+        "links": []
+    },
 ]
 
 
