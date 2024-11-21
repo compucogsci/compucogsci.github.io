@@ -164,11 +164,14 @@ let presentations = [
         ]
     },
     {
-        "title": "[Topic TBD]",
+        "title": "Complementary Learning Systems",
         "presenter": "Jerome Han",
         "date": "2024-11-26",
         "summary": "",
-        "links": []
+        "links": [{
+            "text": "Paper 1: Why There Are Complementary Learning Systems in the Hippocampus and Neocortex: Insights From the Successes and Failures of Connectionist Models of Learning and Memory",
+            "url": "https://psycnet.apa.org/fulltext/1995-42327-001.pdf"
+        }]
     },
     {
         "title": "[Topic TBD (language related)]",
