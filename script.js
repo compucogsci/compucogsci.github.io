@@ -179,6 +179,13 @@ let presentations = [
         "date": "2025-01-14",
         "summary": "",
         "links": []
+    },
+    {
+        "title": "[Topic TBD (cognitive map related)]",
+        "presenter": "Ryan Yan",
+        "date": "2025-01-28",
+        "summary": "",
+        "links": []
     }
 ]
 
