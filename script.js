@@ -186,6 +186,13 @@ let presentations = [
         "date": "2025-01-28",
         "summary": "",
         "links": []
+    },
+    {
+        "title": "Number Cognition",
+        "presenter": "Bendix Kemmann",
+        "date": "2025-02-11",
+        "summary": "",
+        "links": []
     }
 ]
 
