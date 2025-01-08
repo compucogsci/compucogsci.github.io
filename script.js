@@ -174,11 +174,18 @@ let presentations = [
         }]
     },
     {
-        "title": "[Topic TBD (language related)]",
+        "title": "Predictive Coding or Just Feature Discovery?",
         "presenter": "Irmak Ergin",
         "date": "2025-01-14",
         "summary": "",
-        "links": []
+        "links": [{
+            "text": "Paper 1: Predictive Coding or Just Feature Discovery? An Alternative Account of Why Language Models Fit Brain Data",
+            "url": "https://direct.mit.edu/nol/article/5/1/64/113632/Predictive-Coding-or-Just-Feature-Discovery-An"
+        },
+        {
+            "text": "Optional Paper 2: Shared computational principles for language processing in humans and deep language models",
+            "url": "https://www.nature.com/articles/s41593-022-01026-4"
+        }]
     },
     {
         "title": "[Topic TBD (cognitive map related)]",
