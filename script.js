@@ -188,11 +188,14 @@ let presentations = [
         }]
     },
     {
-        "title": "[Topic TBD (cognitive map related)]",
+        "title": "A neural substrate of prediction and reward",
         "presenter": "Ryan Yan",
         "date": "2025-01-28",
         "summary": "",
-        "links": []
+        "links": [{
+            "text": "Paper 1: A neural substrate of prediction and reward",
+            "url": "https://www.science.org/doi/full/10.1126/science.275.5306.1593"
+        },]
     },
     {
         "title": "Number Cognition",
@@ -200,7 +203,7 @@ let presentations = [
         "date": "2025-02-11",
         "summary": "",
         "links": []
-    }
+    },
 ]
 
 
