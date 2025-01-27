@@ -204,6 +204,16 @@ let presentations = [
         "summary": "",
         "links": []
     },
+    {
+        "title": "Inference from social evaluation",
+        "presenter": "Adani Abutto",
+        "date": "2025-03-11",
+        "summary": "",
+        "links": [{
+            "text": "Paper 1: Inference from social evaluation",
+            "url": "https://stanfordpsych.slack.com/archives/C076M0SRVD1/p1737936178354179?thread_ts=1737935475.328779&cid=C076M0SRVD1"
+        },]
+    },
 ]
 
 
