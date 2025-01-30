@@ -214,6 +214,13 @@ let presentations = [
             "url": "https://stanfordpsych.slack.com/archives/C076M0SRVD1/p1737936178354179?thread_ts=1737935475.328779&cid=C076M0SRVD1"
         },]
     },
+    {
+        "title": "TBD",
+        "presenter": "Nastasia Klevak",
+        "date": "2025-05-20",
+        "summary": "TBD",
+        "links": []
+    },
 ]
 
 
