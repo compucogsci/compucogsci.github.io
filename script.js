@@ -205,6 +205,16 @@ let presentations = [
         "links": []
     },
     {
+        "title": "Category learning in infants",
+        "presenter": "Caroline Kaicher",
+        "date": "2025-02-25",
+        "summary": "",
+        "links": [{
+            "text": "Paper 1: Inference from social evaluation",
+            "url": "https://royalsocietypublishing.org/doi/full/10.1098/rspb.2024.1433"
+        },]
+    },
+    {
         "title": "Inference from social evaluation",
         "presenter": "Adani Abutto",
         "date": "2025-03-11",
