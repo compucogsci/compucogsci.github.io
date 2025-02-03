@@ -215,6 +215,16 @@ let presentations = [
         },]
     },
     {
+        "title": "Visual attention in children",
+        "presenter": "Elizabeth Im",
+        "date": "2025-04-01",
+        "summary": "TBD",
+        "links": [{
+            "text": "Paper 1: Visual Attention Preference for Intermediate Predictability in Young Children",
+            "url": "https://www.kiddlab.com/_files/ugd/0975fd_161a755f73fc46c6b58cf68a5e981641.pdf"
+        },]
+    },
+    {
         "title": "TBD",
         "presenter": "Nastasia Klevak",
         "date": "2025-05-20",
