@@ -220,7 +220,7 @@ let presentations = [
         "date": "2025-03-11",
         "summary": "",
         "links": [{
-            "text": "Paper 1: Inference from social evaluation",
+            "text": "Paper 1: The nature of label-induced categories: preverbal infants represent surface features and category symbols",
             "url": "https://stanfordpsych.slack.com/archives/C076M0SRVD1/p1737936178354179?thread_ts=1737935475.328779&cid=C076M0SRVD1"
         },]
     },
