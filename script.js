@@ -201,8 +201,11 @@ let presentations = [
         "title": "Number Cognition",
         "presenter": "Bendix Kemmann",
         "date": "2025-02-11",
-        "summary": "",
-        "links": []
+        "summary": "Is 'number sense' emergent or innate?",
+        "links": [{
+            "text": "Paper 1: Numerosity Discrimination in Deep Neural Networks: Initial Competence, Developmental Refinement and Experience Statistics",
+            "url": "https://doi.org/10.1111/desc.12940"
+        },]
     },
     {
         "title": "Category learning in infants",
