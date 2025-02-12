@@ -239,6 +239,13 @@ let presentations = [
     },
     {
         "title": "TBD",
+        "presenter": "Kristine Zheng",
+        "date": "2025-04-19",
+        "summary": "TBD",
+        "links": []
+    },
+    {
+        "title": "TBD",
         "presenter": "Nastasia Klevak",
         "date": "2025-05-20",
         "summary": "TBD",
