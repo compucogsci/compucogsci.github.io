@@ -238,6 +238,19 @@ let presentations = [
         },]
     },
     {
+        "title": "Explanatory models in neuroscience",
+        "presenter": "Atlas Kazemian",
+        "date": "2025-04-08",
+        "summary": "TBD",
+        "links": [{
+            "text": "Explanatory models in neuroscience, Part 1: Taking mechanistic abstraction seriously",
+            "url": "https://doi.org/10.1016/j.cogsys.2024.101244"
+        },
+        {
+            "text": "Explanatory models in neuroscience: Part 2 -- constraint-based intelligibility",
+            "url": "https://doi.org/10.48550/arXiv.2104.01489"
+        },]
+    {
         "title": "TBD",
         "presenter": "Kristine Zheng",
         "date": "2025-04-29",
