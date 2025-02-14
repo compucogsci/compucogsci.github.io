@@ -250,6 +250,7 @@ let presentations = [
             "text": "Explanatory models in neuroscience: Part 2 -- constraint-based intelligibility",
             "url": "https://doi.org/10.48550/arXiv.2104.01489"
         },]
+    },
     {
         "title": "TBD",
         "presenter": "Kristine Zheng",
