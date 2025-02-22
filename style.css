@@ -1,11 +1,17 @@
+@font-face {
+    font-family: 'Source Sans';
+    src: url('assets/fonts/Source_Sans_3/static/SourceSans3-Regular.ttf') format('truetype');
+}
+
 /* Base styles shared between pages */
 * {
     box-sizing: border-box;
 }
 
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f0f0f5;
+    font-family: 'Source Sans', sans-serif;
+    background-color: #8C1515;
+    color: #2E2D29;
     margin: 0;
     padding: 0;
 }
@@ -15,8 +21,8 @@ body {
     max-width: 1200px;
     margin: 40px auto;
     padding: 20px;
-    background-color: white;
-    border-radius: 8px;
+    background-color: #FFFFFF;
+    border-radius: 16px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -28,7 +34,7 @@ header {
 h1 {
     font-size: 2em;
     margin: 0;
-    color: #333;
+    color: #2E2D29;
 }
 
 nav {
@@ -39,7 +45,7 @@ nav a {
     margin: 0 15px;
     font-size: 18px;
     text-decoration: none;
-    color: #007bff;
+    color: #016895;
 }
 
 nav a:hover {
@@ -61,7 +67,7 @@ ul {
 }
 
 .info {
-    background-color: #fff;
+    background-color: #FFFFFF;
     padding: 20px;
     /* border-radius: 10px; */
     /* border: 1px solid #ddd; */
@@ -85,8 +91,6 @@ ul {
 .indented-paragraph {
     margin-left: 20px; /* Small indentation for paragraphs */
 }
-
-
 
 .about-content h3 {
     font-size: 1.5em;
@@ -120,7 +124,7 @@ ul {
 }
 
 button {
-    background-color: #007bff;
+    background-color: #8F993E;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -132,7 +136,7 @@ button {
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #7a8435;
 }
 
 /* Schedule Table */
@@ -146,6 +150,14 @@ th, td {
     padding: 12px 15px;
     text-align: left;
     border-bottom: 1px solid #ddd;
+}
+
+th:nth-child(1) {
+    width: 200px; /* Date column width */
+}
+
+th:nth-child(2) {
+    width: 150px; /* Presenter column width */
 }
 
 th {
