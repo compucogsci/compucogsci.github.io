@@ -276,6 +276,14 @@ window.onload = function() {
     //displayPresentations(presentations);
 };
 
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+    const formattedDate = date.toLocaleDateString('en-US', options);
+    const [weekday, monthDay, year] = formattedDate.split(', ');
+    return `${weekday}, <strong>${monthDay}</strong>, ${year}`;
+}
+
 function displayPresentations(list) {
     const table = document.getElementById('presentations');
     table.innerHTML = '';
@@ -284,9 +292,9 @@ function displayPresentations(list) {
         const linkHTML = presentation.links.map(link => `<a href="${link.url}" target="_blank">${link.text}</a>`).join(', ');
 
         let row = `<tr>
-            <td>${presentation.date}</td>
-            <td>${presentation.title}</td>
+            <td>${formatDate(presentation.date)}</td>
             <td>${presentation.presenter}</td>
+            <td>${presentation.title}</td>
             <td>${presentation.summary}</td>
             <td>${linkHTML}</td>
         </tr>`;
