@@ -185,3 +185,13 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
+.next-meeting-notice {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #8C1515;
+    margin: 15px 0;
+    padding: 10px;
+    background-color: #f8f8f8;
+    border-radius: 5px;
+}
