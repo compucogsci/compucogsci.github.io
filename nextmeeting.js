@@ -19,6 +19,6 @@ function findNextMeeting() {
 window.addEventListener('DOMContentLoaded', () => {
     const noticeElement = document.getElementById('next-meeting-notice');
     if (noticeElement) {
-        noticeElement.textContent = `Our next meeting is on ${findNextMeeting()}`;
+        noticeElement.textContent = `Our next meeting is on ${findNextMeeting()}.`;
     }
 });
