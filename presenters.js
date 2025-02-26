@@ -220,7 +220,7 @@ let presentations = [
     {
         "title": "Inference from social evaluation",
         "presenter": "Adani Abutto",
-        "date": "2025-03-11",
+        "date": "2025-03-18",
         "summary": "",
         "links": [{
             "text": "Paper 1: The nature of label-induced categories: preverbal infants represent surface features and category symbols",
