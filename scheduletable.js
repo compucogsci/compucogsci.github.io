@@ -7,9 +7,17 @@ window.onload = function() {
 };
 
 function formatDate(dateStr) {
-    const date = new Date(dateStr);
-    const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+    // Create date with specific time (6pm PT) to ensure correct day
+    const date = new Date(dateStr + 'T18:00:00-07:00');
+    const options = {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+        timeZone: 'America/Los_Angeles'
+    };
     const formattedDate = date.toLocaleDateString('en-US', options);
+    // Split into components: "Tuesday, April 30, 2024"
     const [weekday, monthDay, year] = formattedDate.split(', ');
     return `${weekday}, <strong>${monthDay}</strong>, ${year}`;
 }
