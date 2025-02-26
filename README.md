@@ -1,2 +1,2 @@
 # compucogsci.github.io
-Club Website
+reading group website

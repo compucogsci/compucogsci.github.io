@@ -6,17 +6,21 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <title>Reading Club - Schedule</title>
+    <title>CompCogSci Reading Group - Schedule</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Load presenters.js first since scheduletable.js depends on it -->
+    <script src="presenters.js"></script>
+    <script src="scheduletable.js"></script>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Computational Cognitive Science Reading Club</h1>
+            <h1>Stanford Computational Cognitive Science Reading Group</h1>
             <nav>
                 <a href="index.html">Home</a>
                 <a href="schedule.html">Schedule</a>
             </nav>
+            <p>All meetings occur from <strong> 6pm to 8pm</strong> PT in Building 420.</p>
         </header>
 
         <section class="controls">
@@ -29,8 +33,8 @@
             <thead>
                 <tr>
                     <th onclick="toggleSort()">Date <span id="sortIcon">⬆️</span></th>
-                    <th>Title</th>
                     <th>Presenter</th>
+                    <th>Title</th>
                     <th>Summary</th>
                     <th>Links</th>
                 </tr>
@@ -40,7 +44,5 @@
             </tbody>
         </table>
     </div>
-
-    <script src="script.js"></script>
 </body>
 </html>
