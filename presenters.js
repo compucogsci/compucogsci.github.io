@@ -223,8 +223,8 @@ let presentations = [
         "date": "2025-03-18",
         "summary": "",
         "links": [{
-            "text": "Paper 1: The nature of label-induced categories: preverbal infants represent surface features and category symbols",
-            "url": "https://stanfordpsych.slack.com/archives/C076M0SRVD1/p1737936178354179?thread_ts=1737935475.328779&cid=C076M0SRVD1"
+            "text": "Paper 1: Exploration in 4-year-old children is guided by learning progress and novelty (Poli, et al., 2025),
+            "url": "https://doi.org/10.1111/cdev.14158"
         },]
     },
     {
