@@ -218,12 +218,12 @@ let presentations = [
         },]
     },
     {
-        "title": "Inference from social evaluation",
+        "title": "Young curiosity",
         "presenter": "Adani Abutto",
         "date": "2025-03-18",
         "summary": "",
         "links": [{
-            "text": "Paper 1: Exploration in 4-year-old children is guided by learning progress and novelty (Poli, et al., 2025),
+            "text": "Paper 1: Exploration in 4-year-old children is guided by learning progress and novelty (Poli, et al., 2025)",
             "url": "https://doi.org/10.1111/cdev.14158"
         },]
     },
