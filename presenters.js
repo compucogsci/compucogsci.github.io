@@ -259,6 +259,16 @@ let presentations = [
         "links": []
     },
     {
+        "title": "Affect and visual perception",
+        "presenter": "Ryan Yan",
+        "date": "2025-05-06",
+        "summary": "",
+        "links": [{
+            "text": "Affectless visual machines explain a majority of variance in human visually evoked affect (Conwell et al 2025)",
+            "url": "https://doi.org/10.1073/pnas.2306025121"
+        }]
+    },
+    {
         "title": "TBD",
         "presenter": "Nastasia Klevak",
         "date": "2025-05-20",
