@@ -233,8 +233,8 @@ let presentations = [
         "date": "2025-04-01",
         "summary": "TBD",
         "links": [{
-            "text": "Paper 1: Visual Attention Preference for Intermediate Predictability in Young Children",
-            "url": "https://www.kiddlab.com/_files/ugd/0975fd_161a755f73fc46c6b58cf68a5e981641.pdf"
+            "text": "Paper 1: Free viewing biases for complex scenes in preschoolers and adults",
+            "url": "https://www.nature.com/articles/s41598-023-38854-8"
         },]
     },
     {
