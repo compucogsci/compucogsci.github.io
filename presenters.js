@@ -228,13 +228,13 @@ let presentations = [
         },]
     },
     {
-        "title": "Visual attention in children",
+        "title": "Social perception and development in the brain",
         "presenter": "Elizabeth Im",
         "date": "2025-04-01",
-        "summary": "TBD",
+        "summary": "Elizabeth's own work!",
         "links": [{
-            "text": "Paper 1: Free viewing biases for complex scenes in preschoolers and adults",
-            "url": "https://www.nature.com/articles/s41598-023-38854-8"
+            "text": "Early Neural Development of Social Interaction Perception: Evidence from Voxel-Wise Encoding in Young Children and Adults (Im, Shirahatti, & Isik, 2025)",
+            "url": "https://doi.org/10.1523/JNEUROSCI.2284-23.2024"
         },]
     },
     {
