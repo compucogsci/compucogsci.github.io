@@ -252,11 +252,14 @@ let presentations = [
         },]
     },
     {
-        "title": "TBD",
+        "title": "Bridging social cognition and language",
         "presenter": "Kristine Zheng",
         "date": "2025-04-29",
-        "summary": "TBD",
-        "links": []
+        "summary": "Analyzing how people produce and process language at the word level, in real time, reveals rich social micro-processes that permeate linguistic communication.",
+        "links": [{
+            "text": "Tracking minds in communication (Rubio-Fernandez, Berke, & Jara-Ettinger, 2025),
+            "url": "https://doi.org/10.1016/j.tics.2024.11.005"
+        }]
     },
     {
         "title": "Affect and visual perception",
