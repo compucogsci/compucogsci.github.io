@@ -2,26 +2,16 @@ const fs = require('fs');
 const nodemailer = require('nodemailer');
 const path = require('path');
 
-// Function to get presentations data from JavaScript file
+// Function to get presentations data from JSON file
 function getPresentation() {
-  // Read the presenters file
-  const presentersFilePath = path.join(process.cwd(), 'presenters.js');
-  let presentersFileContent = fs.readFileSync(presentersFilePath, 'utf8');
-
-  // Extract the array from the file content - handle both spacing and quotes
-  presentersFileContent = presentersFileContent.replace(/^.*presentations\s*=\s*/, '');
-  presentersFileContent = presentersFileContent.replace(/\s*;\s*$/, '');
-  
-  // Fix JSON format issues (trailing commas, etc.)
-  presentersFileContent = presentersFileContent.replace(/,(\s*[\]}])/g, '$1');
-  
+  // Read the presentations JSON file
+  const presentationsFilePath = path.join(process.cwd(), 'presentations.json');
   try {
-    // Parse the presentations array
-    const presentations = JSON.parse(presentersFileContent);
+    const presentationsContent = fs.readFileSync(presentationsFilePath, 'utf8');
+    const presentations = JSON.parse(presentationsContent);
     return presentations;
   } catch (error) {
-    console.error('Error parsing presentations data:', error);
-    console.log('Content that failed to parse:', presentersFileContent);
+    console.error('Error reading or parsing presentations data:', error);
     process.exit(1);
   }
 }

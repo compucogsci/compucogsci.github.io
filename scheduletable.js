@@ -2,9 +2,18 @@ let ascending = true;
 let currentFilter = 'future'; // Track current filter state
 const today = new Date().toISOString().split("T")[0];
 
-window.onload = function() {
-    filterPresentations("future");
-};
+// Wait for DOM and data to be ready
+document.addEventListener('DOMContentLoaded', function() {
+    // If data is already loaded, initialize
+    if (presentations && presentations.length > 0) {
+        filterPresentations('future');
+    } else {
+        // Otherwise wait for data to load
+        document.addEventListener('presentationsLoaded', function() {
+            filterPresentations('future');
+        });
+    }
+});
 
 function formatDate(dateStr) {
     // Create date with specific time (6pm PT) to ensure correct day
@@ -82,7 +91,3 @@ function filterPresentations(type) {
     currentFilter = type;
     displayPresentations(presentations);
 }
-
-window.onload = function() {
-    filterPresentations('future');
-};
