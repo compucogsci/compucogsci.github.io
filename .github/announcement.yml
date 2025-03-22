@@ -1,0 +1,30 @@
+name: Send Presentation Announcement Email
+
+on:
+  schedule:
+    # Run at 10 AM PST
+    - cron: '0 17 * * *'  # 10 AM PDT
+  workflow_dispatch: # Allows manual triggering for testing
+
+jobs:
+  check-and-send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      
+      - name: Install dependencies
+        run: npm install nodemailer
+      
+      - name: Run reminder script
+        env:
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
+          GOOGLE_FORM_URL: ${{ secrets.GOOGLE_FORM_URL }}
+        run: node .github/scripts/send-reminder.js
