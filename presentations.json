@@ -1,34 +1,33 @@
-// let presentations = fetch("https://github.com/compucogsci/compucogsci.github.io/blob/main/presentations.json").then().then().catch();
-let presentations = [
+[
     {
-        title: "Learning dynamics of deep learning",
-        presenter: "Satchel Grant",
-        date: "2024-04-30",
-        summary: "Understanding analytical solutions to artificial neural networks and its relevance to cognition.",
-        links: [
+        "title": "Learning dynamics of deep learning",
+        "presenter": "Satchel Grant",
+        "date": "2024-04-30",
+        "summary": "Understanding analytical solutions to artificial neural networks and its relevance to cognition.",
+        "links": [
             {
-                text: "Paper 1: Neural Race Reduction",
-                url: "https://proceedings.mlr.press/v162/saxe22a.html"
+                "text": "Paper 1: Neural Race Reduction",
+                "url": "https://proceedings.mlr.press/v162/saxe22a.html"
             },
             {
-                text: "Paper 2: Exact solutions to nonlinear dynamcis of learning in deep nets",
-                url: "https://arxiv.org/abs/1312.6120"
+                "text": "Paper 2: Exact solutions to nonlinear dynamcis of learning in deep nets",
+                "url": "https://arxiv.org/abs/1312.6120"
             }
         ]
     },
     {
-        title: "Library learning",
-        presenter: "Sean Anderson",
-        date: "2024-05-21",
-        summary: "",
-        links: [
+        "title": "Library learning",
+        "presenter": "Sean Anderson",
+        "date": "2024-05-21",
+        "summary": "",
+        "links": [
             {
-                text: "Paper 1: Dreamcoder: growing generalizable, interpretable knowledge with wake–sleep bayesian program learning",
-                url: "https://royalsocietypublishing.org/doi/epdf/10.1098/rsta.2022.0050"
+                "text": "Paper 1: Dreamcoder: growing generalizable, interpretable knowledge with wake–sleep bayesian program learning",
+                "url": "https://royalsocietypublishing.org/doi/epdf/10.1098/rsta.2022.0050"
             },
             {
-                text: "Paper 2: How to grow a mind: Statistics, structure, and abstraction",
-                url: "https://www.science.org/doi/abs/10.1126/science.1192788"
+                "text": "Paper 2: How to grow a mind: Statistics, structure, and abstraction",
+                "url": "https://www.science.org/doi/abs/10.1126/science.1192788"
             }
         ]
     },
@@ -102,7 +101,7 @@ let presentations = [
                 "text": "Paper 1: Empowerment contributes to exploration behaviour in a creative video game",
                 "url": "https://www.nature.com/articles/s41562-023-01661-2"
             }
-        ],
+        ]
     },
     {
         "title": "Generative replay in hippocampus",
@@ -195,7 +194,7 @@ let presentations = [
         "links": [{
             "text": "Paper 1: A neural substrate of prediction and reward",
             "url": "https://www.science.org/doi/full/10.1126/science.275.5306.1593"
-        },]
+        }]
     },
     {
         "title": "Number Cognition",
@@ -205,7 +204,7 @@ let presentations = [
         "links": [{
             "text": "Paper 1: Numerosity Discrimination in Deep Neural Networks: Initial Competence, Developmental Refinement and Experience Statistics",
             "url": "https://doi.org/10.1111/desc.12940"
-        },]
+        }]
     },
     {
         "title": "Category learning in infants",
@@ -215,7 +214,7 @@ let presentations = [
         "links": [{
             "text": "Paper 1: Inference from social evaluation",
             "url": "https://royalsocietypublishing.org/doi/full/10.1098/rspb.2024.1433"
-        },]
+        }]
     },
     {
         "title": "Young curiosity",
@@ -225,7 +224,7 @@ let presentations = [
         "links": [{
             "text": "Paper 1: Exploration in 4-year-old children is guided by learning progress and novelty (Poli, et al., 2025)",
             "url": "https://doi.org/10.1111/cdev.14158"
-        },]
+        }]
     },
     {
         "title": "Social perception and development in the brain",
@@ -235,7 +234,7 @@ let presentations = [
         "links": [{
             "text": "Early Neural Development of Social Interaction Perception: Evidence from Voxel-Wise Encoding in Young Children and Adults (Im, Shirahatti, & Isik, 2025)",
             "url": "https://doi.org/10.1523/JNEUROSCI.2284-23.2024"
-        },]
+        }]
     },
     {
         "title": "Explanatory models in neuroscience",
@@ -249,7 +248,7 @@ let presentations = [
         {
             "text": "Explanatory models in neuroscience: Part 2 -- constraint-based intelligibility",
             "url": "https://doi.org/10.48550/arXiv.2104.01489"
-        },]
+        }]
     },
     {
         "title": "Bridging social cognition and language",
@@ -277,5 +276,5 @@ let presentations = [
         "date": "2025-05-20",
         "summary": "TBD",
         "links": []
-    },
+    }
 ]
