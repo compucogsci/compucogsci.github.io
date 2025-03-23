@@ -110,13 +110,19 @@ async function sendReminderEmail() {
   </html>
   `;
 
-  // Set up the email transporter
+  // Replace the Gmail transporter with Microsoft Exchange/Outlook configuration
   const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.office365.com',  // Microsoft Exchange Online SMTP server
+    port: 587,                   // Standard secure SMTP port
+    secure: false,               // For port 587, secure should be false
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
+      user: process.env.EMAIL_USER,  // Your Stanford email address
+      pass: process.env.EMAIL_PASS,  // Your email password or app password
     },
+    tls: {
+      ciphers: 'SSLv3',
+      rejectUnauthorized: false  // Sometimes needed for institutional servers
+    }
   });
 
   // Send the email
@@ -131,6 +137,7 @@ async function sendReminderEmail() {
     console.log(`Email sent: ${info.messageId}`);
   } catch (error) {
     console.error('Error sending email:', error);
+    console.error('Error details:', error.message);
     process.exit(1);
   }
 }
