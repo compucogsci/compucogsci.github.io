@@ -2,8 +2,8 @@ name: Send Presentation Announcement Email
 
 on:
   schedule:
-    # Run at 10 AM PST
-    - cron: '0 17 * * *'  # 10 AM PDT
+    # Run mondays at 10 AM PDT
+    - cron: '0 17 * * 1'
   workflow_dispatch: # Allows manual triggering for testing
 
 jobs:
@@ -27,4 +27,4 @@ jobs:
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
           RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
           GOOGLE_FORM_URL: ${{ secrets.GOOGLE_FORM_URL }}
-        run: node .github/scripts/send-reminder.js
+        run: node .github/scripts/send_announcement.js

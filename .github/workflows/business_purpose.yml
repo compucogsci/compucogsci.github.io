@@ -1,0 +1,58 @@
+name: Generate Business Purpose Email
+
+on:
+  schedule:
+    # Run every Wednesday at 10:00 AM PT (17:00 UTC during standard time, 18:00 UTC during daylight saving time)
+    - cron: '0 17 * * 3'
+  workflow_dispatch: # Allow manual triggering for testing
+
+jobs:
+  generate-business-purpose:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: |
+          npm install googleapis @actions/core nodemailer axios @microsoft/microsoft-graph-client @azure/identity
+      
+      - name: Run business purpose script
+        id: business-purpose
+        env:
+          GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}
+          SHEET_ID: ${{ secrets.SHEET_ID }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          RECIPIENT_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
+          STANFORD_API_KEY: ${{ secrets.STANFORD_API_KEY }}
+          STANFORD_API_SECRET: ${{ secrets.STANFORD_API_SECRET }}
+          MS_TENANT_ID: ${{ secrets.MS_TENANT_ID }}
+          MS_CLIENT_ID: ${{ secrets.MS_CLIENT_ID }}
+          MS_CLIENT_SECRET: ${{ secrets.MS_CLIENT_SECRET }}
+        run: node .github/scripts/business_purpose.js
+      
+      # Notify via Slack if configured (as a backup)
+      - name: Send Slack notification
+        if: ${{ env.SLACK_WEBHOOK_URL }}
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: |
+            {
+              "attachments": [
+                {
+                  "color": "good",
+                  "title": "Business Purpose Email Generated",
+                  "text": "Business purpose email has been generated for meeting: ${{ steps.business-purpose.outputs.meeting_title }} (${{ steps.business-purpose.outputs.meeting_date }})\nAttendee count: ${{ steps.business-purpose.outputs.attendee_count }}"
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
