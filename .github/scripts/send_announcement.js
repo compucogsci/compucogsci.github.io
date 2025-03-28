@@ -47,15 +47,11 @@ function findUpcomingPresentation() {
 function generateRsvpFormUrl(meetingDate) {
   if (!GOOGLE_FORM_BASE_URL) return '';
   
-  // Parse the date and format it as MM/DD/YYYY for the form
+  // Format date as YYYY-MM-DD using toISOString() and extracting the date part
   const date = new Date(meetingDate);
-  const month = date.getMonth() + 1; // getMonth() is zero-based
-  const day = date.getDate();
-  const year = date.getFullYear();
-  const formattedDate = `${month}/${day}/${year}`;
+  const formattedDate = date.toISOString().split('T')[0]; // Gets YYYY-MM-DD part
   
   // Append the date to the base URL
-  // The base URL should end with something like "entry.123456789="
   return `${GOOGLE_FORM_BASE_URL}${encodeURIComponent(formattedDate)}`;
 }
 
@@ -90,28 +86,41 @@ async function sendReminderEmail() {
   const rsvpFormUrl = generateRsvpFormUrl(upcomingPresentation.date);
   
   // Include Google Form pre-filled URL if generated
-  const googleFormSection = rsvpFormUrl ? 
-    `<p>Please fill out <a href="${rsvpFormUrl}">this form</a> if you plan to attend.</p>` : '';
+  const googleFormSentence = rsvpFormUrl ? 
+    `Please <strong><a href="${rsvpFormUrl}">RSVP here</a> by Monday 10am</strong>
+     if you plan on attending!` : '';
 
-  const emailSubject = `Reminder: ${presenter} presenting "${title}" on ${formattedDate}`;
+  const emailSubject = `[compcogsci] Next meeting ${formattedDate}: ${title} with ${presenter}`;
+  // FIXME: fix paper title, short APA citation, and link. Also handle multiple papers case
   const emailBody = `
   <html>
   <body>
-    <p>Hello everyone,</p>
+    <p>Hello all!</p>
+
+    <p>
+    The next meeting of the Computational Cognitive Science Reading Group will occur on
+     <strong>${formattedDate}</strong>, from 6-8pm PT in Room 358 of Building 420.
+     ${googleFormSentence}
+     All members of the Stanford research community are welcome to the meeting.
+    </p>
+
+    <p>
+    This session will be led by <strong>${presenter}</strong> on "${paperTitle}".
+     We ask that everyone attending attempt to read the paper to be discussed before the meeting.
+    </p>
+
+    <p>
+    More information, including extra paper links, club schedule, and future speakers can be found
+     on our website viewable <a href="https://compucogsci.github.io/schedule.html">here</a>.
+    </p>
+
+    <p>
+    Hope to see you there!
+    </p>
     
-    <p>This is a reminder that ${presenter} will be presenting "${title}" next week on ${formattedDate}.</p>
-    
-    <p>Papers for this presentation:</p>
-    <ul>
-      ${links}
-    </ul>
-    
-    ${googleFormSection}
-    
-    <p>Please read the paper(s) before the meeting. If you have any questions, please contact ${presenter} directly.</p>
-    
-    <p>Best regards,<br>
-    Stanford Computational Cognitive Science Reading Group</p>
+    <p>Best,<br><br>
+    Sean and Satchel
+    </p>
   </body>
   </html>
   `;
