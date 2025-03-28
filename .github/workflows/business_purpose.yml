@@ -9,6 +9,7 @@ on:
 jobs:
   generate-business-purpose:
     runs-on: ubuntu-latest
+    environment: github actions
     
     steps:
       - name: Checkout code

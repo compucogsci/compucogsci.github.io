@@ -9,6 +9,7 @@ on:
 jobs:
   check-and-send:
     runs-on: ubuntu-latest
+    environment: github actions
     steps:
       - name: Checkout code
         uses: actions/checkout@v3

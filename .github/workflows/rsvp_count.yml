@@ -10,6 +10,7 @@ on:
 jobs:
   check-upcoming-meeting:
     runs-on: ubuntu-latest
+    environment: github actions
     outputs:
       has_meeting: ${{ steps.check-meeting.outputs.has_meeting }}
       meeting_date: ${{ steps.check-meeting.outputs.meeting_date }}

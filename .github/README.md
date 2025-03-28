@@ -75,6 +75,24 @@ Automatically generates a business purpose email for reimbursement processes aft
 
 ## Setup Instructions
 
+### Secret Management
+
+This repository uses GitHub Environments for secret management:
+
+1. Create an environment called `github actions` in your repository:
+   - Go to your repository > Settings > Environments > New environment
+   - Name it "github actions"
+   - Add any required reviewers or protection rules if desired
+
+2. Add the following secrets to the `github actions` environment:
+   - `GOOGLE_SHEETS_CREDENTIALS`: JSON string of service account credentials
+   - `SHEET_ID`: ID of your Google Sheet containing RSVPs
+   - `GMAIL_USER`: Gmail address to send from
+   - `GMAIL_APP_PASSWORD`: App password for Gmail
+   - etc.
+
+> Note: Keep these secrets separate from the `github-pages` environment that's used for website deployment.
+
 ### Google API Setup for RSVP Counting and Business Purpose
 
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
