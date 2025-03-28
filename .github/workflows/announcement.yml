@@ -28,7 +28,7 @@ jobs:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
-          GOOGLE_FORM_URL: ${{ secrets.GOOGLE_FORM_URL }}
+          GOOGLE_FORM_BASE_URL: ${{ secrets.GOOGLE_FORM_BASE_URL }}
         run: node .github/scripts/send_announcement.js
       
       # Check if notification issue already exists if the email fails

@@ -36,13 +36,13 @@ Sends announcement emails for upcoming reading group presentations.
 - Runs every Monday at 10:00 AM PDT (17:00 UTC)
 - Checks for upcoming presentations in `presentations.json`
 - Sends an announcement email with presentation details
-- Includes a link to the RSVP form
+- Dynamically generates the RSVP form link by appending the meeting date to the base URL
 
 **Required Secrets:**
 - `GMAIL_USER`: Gmail address to send from
 - `GMAIL_APP_PASSWORD`: App password for Gmail
 - `NOTIFICATION_EMAIL`: Email address to send announcements to (optional, defaults to GMAIL_USER)
-- `GOOGLE_FORM_URL`: URL for the RSVP Google Form
+- `GOOGLE_FORM_BASE_URL`: Base URL for the RSVP Google Form (will have the meeting date appended in YYYY-MM-DD format)
 
 **Files:**
 - `.github/scripts/send_announcement.js`: Script that sends announcement emails

@@ -6,9 +6,9 @@ const utils = require('./utils');
 const GMAIL_USER = process.env.GMAIL_USER;
 const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
 const NOTIFICATION_EMAIL = process.env.NOTIFICATION_EMAIL || GMAIL_USER;
-const GOOGLE_FORM_URL = process.env.GOOGLE_FORM_URL;
+const GOOGLE_FORM_BASE_URL = process.env.GOOGLE_FORM_BASE_URL;
 
-// Find presentation that's exactly 7 days away
+// Find presentation that's exactly 8 days away
 function findUpcomingPresentation() {
   // Check if we've already sent a reminder for this date (to prevent duplicate emails)
   const reminderLogPath = path.join(process.cwd(), '.github', 'reminder-log.json');
@@ -22,8 +22,8 @@ function findUpcomingPresentation() {
     }
   }
   
-  // Look for a presentation scheduled 7 days from today
-  const upcomingPresentation = utils.findMeetingDaysFromNow(7);
+  // Look for a presentation scheduled 8 days from today
+  const upcomingPresentation = utils.findMeetingDaysFromNow(8);
   
   if (upcomingPresentation) {
     // Check if we already sent a reminder for this date
@@ -41,12 +41,26 @@ function findUpcomingPresentation() {
   return null;
 }
 
+/**
+ * Generate the dynamic RSVP form URL by appending the meeting date
+ */
+function generateRsvpFormUrl(meetingDate) {
+  if (!GOOGLE_FORM_BASE_URL) return '';
+  
+  // Format date as YYYY-MM-DD (should already be in this format, but ensuring it)
+  const formattedDate = new Date(meetingDate).toISOString().split('T')[0];
+  
+  // Append the date to the base URL
+  // The base URL should end with something like "entry.123456789="
+  return `${GOOGLE_FORM_BASE_URL}${encodeURIComponent(formattedDate)}`;
+}
+
 // Create and send the email
 async function sendReminderEmail() {
   const upcomingPresentation = findUpcomingPresentation();
 
   if (!upcomingPresentation) {
-    console.log('No presentation scheduled for 7 days from now.');
+    console.log('No presentation scheduled for 8 days from now.');
     return true; // Not an error case
   }
 
@@ -68,9 +82,12 @@ async function sendReminderEmail() {
     `<li><a href="${link.url}">${link.text}</a></li>`
   ).join('\n');
 
-  // Include Google Form pre-filled URL if provided
-  const googleFormSection = GOOGLE_FORM_URL ? 
-    `<p>Please fill out <a href="${GOOGLE_FORM_URL}">this form</a> if you plan to attend.</p>` : '';
+  // Generate the dynamic RSVP form URL
+  const rsvpFormUrl = generateRsvpFormUrl(upcomingPresentation.date);
+  
+  // Include Google Form pre-filled URL if generated
+  const googleFormSection = rsvpFormUrl ? 
+    `<p>Please fill out <a href="${rsvpFormUrl}">this form</a> if you plan to attend.</p>` : '';
 
   const emailSubject = `Reminder: ${presenter} presenting "${title}" on ${formattedDate}`;
   const emailBody = `
@@ -120,5 +137,6 @@ if (require.main === module) {
 
 module.exports = {
   findUpcomingPresentation,
-  sendReminderEmail
+  sendReminderEmail,
+  generateRsvpFormUrl  // Export for testing
 };
