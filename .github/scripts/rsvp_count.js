@@ -7,8 +7,8 @@ const nodemailer = require('nodemailer');
 // Read credentials from environment variables or GitHub secrets
 const CREDENTIALS = JSON.parse(process.env.GOOGLE_SHEETS_CREDENTIALS);
 const SHEET_ID = process.env.SHEET_ID;
-const EMAIL_USER = process.env.EMAIL_USER;
-const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
+const GMAIL_USER = process.env.GMAIL_USER;
+const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
 const NOTIFICATION_EMAIL = process.env.NOTIFICATION_EMAIL;
 
 async function getUniqueRsvpCount() {
@@ -98,18 +98,18 @@ async function getUniqueRsvpCount() {
 }
 
 async function sendEmail(result) {
-  // Create a transporter
+  // Create a transporter for Gmail
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: EMAIL_USER,
-      pass: EMAIL_PASSWORD,
+      user: GMAIL_USER,
+      pass: GMAIL_APP_PASSWORD,
     },
   });
   
   // Email content
   const mailOptions = {
-    from: EMAIL_USER,
+    from: GMAIL_USER,
     to: NOTIFICATION_EMAIL,
     subject: `RSVP Count for ${result.meeting.title} (${result.meeting.date})`,
     text: `
@@ -140,8 +140,16 @@ async function run() {
       core.setOutput('meeting_date', result.meeting.date);
       
       // Send email notification
-      if (EMAIL_USER && EMAIL_PASSWORD && NOTIFICATION_EMAIL) {
-        await sendEmail(result);
+      if (GMAIL_USER && GMAIL_APP_PASSWORD) {
+        try {
+          await sendEmail(result);
+        } catch (emailError) {
+          console.error('Failed to send email:', emailError);
+          core.setOutput('email_failed', 'true');
+        }
+      } else {
+        console.log('Email credentials not provided');
+        core.setOutput('email_failed', 'true');
       }
       
       console.log(`RSVP Count: ${result.count}`);
@@ -151,6 +159,7 @@ async function run() {
     }
   } catch (error) {
     core.setFailed(`Action failed with error: ${error}`);
+    core.setOutput('email_failed', 'true');
   }
 }
 

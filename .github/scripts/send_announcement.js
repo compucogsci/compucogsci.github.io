@@ -110,37 +110,35 @@ async function sendReminderEmail() {
   </html>
   `;
 
-  // Replace the Gmail transporter with Microsoft Exchange/Outlook configuration
+  // Setup Gmail transporter instead of Microsoft Exchange
   const transporter = nodemailer.createTransport({
-    host: 'smtp.office365.com',  // Microsoft Exchange Online SMTP server
-    port: 587,                   // Standard secure SMTP port
-    secure: false,               // For port 587, secure should be false
+    service: 'gmail',
     auth: {
-      user: process.env.EMAIL_USER,  // Your Stanford email address
-      pass: process.env.EMAIL_PASS,  // Your email password or app password
-    },
-    tls: {
-      ciphers: 'SSLv3',
-      rejectUnauthorized: false  // Sometimes needed for institutional servers
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_APP_PASSWORD,
     }
   });
 
   // Send the email
   try {
     const info = await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: process.env.RECIPIENT_EMAIL,
+      from: process.env.GMAIL_USER,
+      to: process.env.NOTIFICATION_EMAIL,
       subject: emailSubject,
       html: emailBody,
     });
     
     console.log(`Email sent: ${info.messageId}`);
+    return true;
   } catch (error) {
     console.error('Error sending email:', error);
     console.error('Error details:', error.message);
-    process.exit(1);
+    return false;
   }
 }
 
 // Run the main function
-sendReminderEmail();
+const result = sendReminderEmail();
+if (!result) {
+  process.exit(1); // Signal failure to GitHub Actions
+}

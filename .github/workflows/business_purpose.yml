@@ -21,38 +21,74 @@ jobs:
       
       - name: Install dependencies
         run: |
-          npm install googleapis @actions/core nodemailer axios @microsoft/microsoft-graph-client @azure/identity
+          npm install googleapis @actions/core nodemailer axios
       
       - name: Run business purpose script
         id: business-purpose
         env:
           GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}
           SHEET_ID: ${{ secrets.SHEET_ID }}
-          EMAIL_USER: ${{ secrets.EMAIL_USER }}
-          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-          RECIPIENT_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
           STANFORD_API_KEY: ${{ secrets.STANFORD_API_KEY }}
           STANFORD_API_SECRET: ${{ secrets.STANFORD_API_SECRET }}
-          MS_TENANT_ID: ${{ secrets.MS_TENANT_ID }}
-          MS_CLIENT_ID: ${{ secrets.MS_CLIENT_ID }}
-          MS_CLIENT_SECRET: ${{ secrets.MS_CLIENT_SECRET }}
         run: node .github/scripts/business_purpose.js
       
-      # Notify via Slack if configured (as a backup)
-      - name: Send Slack notification
-        if: ${{ env.SLACK_WEBHOOK_URL }}
-        uses: 8398a7/action-slack@v3
+      # Check if notification issue already exists
+      - name: Check for existing notification issue
+        if: ${{ steps.business-purpose.outputs.email_failed == 'true' }}
+        id: check-issue
+        uses: actions/github-script@v6
         with:
-          status: custom
-          custom_payload: |
-            {
-              "attachments": [
-                {
-                  "color": "good",
-                  "title": "Business Purpose Email Generated",
-                  "text": "Business purpose email has been generated for meeting: ${{ steps.business-purpose.outputs.meeting_title }} (${{ steps.business-purpose.outputs.meeting_date }})\nAttendee count: ${{ steps.business-purpose.outputs.attendee_count }}"
-                }
-              ]
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: ['notification-failure']
+            });
+            
+            if (issues.data.length > 0) {
+              console.log('Existing notification failure issue found');
+              return true;
             }
+            console.log('No existing notification failure issue');
+            return false;
+          result-encoding: string
+      
+      # Fallback to GitHub issue if email fails and no existing issue
+      - name: Create GitHub Issue for notification failure
+        if: ${{ steps.business-purpose.outputs.email_failed == 'true' && steps.check-issue.outputs.result == 'false' }}
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const title = 'Email Notification System Failure';
+            const body = `
+            The email notification system is failing to send emails.
+            
+            Please check the following:
+            1. The Gmail credentials in GitHub secrets
+            2. Whether the app password is still valid
+            3. Gmail sending limits or restrictions
+            
+            Latest attempt was for the business purpose email:
+            Meeting: ${process.env.MEETING_TITLE} (${process.env.MEETING_DATE})
+            Attendee count: ${process.env.ATTENDEE_COUNT}
+            
+            Once fixed, please close this issue.
+            `;
+            
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['notification-failure', 'bug']
+            });
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          MEETING_TITLE: ${{ steps.business-purpose.outputs.meeting_title }}
+          MEETING_DATE: ${{ steps.business-purpose.outputs.meeting_date }}
+          ATTENDEE_COUNT: ${{ steps.business-purpose.outputs.attendee_count }}

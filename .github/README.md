@@ -13,18 +13,16 @@ Automatically counts unique RSVP submissions for upcoming meetings.
 - Checks if there's a meeting scheduled for the current week in `presentations.json`
 - If a meeting is found, it counts unique email addresses from the Google Sheet RSVP form
 - Only counts emails for the most recent meeting date in the RSVP form
-- Notification methods (in order of preference):
-  1. Email notification (if configured)
-  2. Slack notification (if configured)
-  3. Create a GitHub issue (fallback option)
+- Notification methods:
+  1. Email notification via Gmail
+  2. GitHub issue (only created once if email notification fails)
 
 **Required Secrets:**
 - `GOOGLE_SHEETS_CREDENTIALS`: JSON string of service account credentials
 - `SHEET_ID`: ID of your Google Sheet containing RSVPs
-- `EMAIL_USER`: Gmail address to send from (optional)
-- `EMAIL_PASSWORD`: App password for Gmail (optional)
-- `NOTIFICATION_EMAIL`: Email to receive notifications (optional)
-- `SLACK_WEBHOOK_URL`: Webhook URL for Slack notifications (optional)
+- `GMAIL_USER`: Gmail address to send notifications from
+- `GMAIL_APP_PASSWORD`: App password for Gmail
+- `NOTIFICATION_EMAIL`: Email to receive notifications (optional, defaults to GMAIL_USER)
 
 **Files:**
 - `.github/scripts/rsvp_count.js`: Main script for counting RSVPs
@@ -41,9 +39,9 @@ Sends announcement emails for upcoming reading group presentations.
 - Includes a link to the RSVP form
 
 **Required Secrets:**
-- `EMAIL_USER`: Email address to send from
-- `EMAIL_PASS`: Password/app password for the email account
-- `RECIPIENT_EMAIL`: Email address to send announcements to
+- `GMAIL_USER`: Gmail address to send from
+- `GMAIL_APP_PASSWORD`: App password for Gmail
+- `NOTIFICATION_EMAIL`: Email address to send announcements to (optional, defaults to GMAIL_USER)
 - `GOOGLE_FORM_URL`: URL for the RSVP Google Form
 
 **Files:**
@@ -52,7 +50,7 @@ Sends announcement emails for upcoming reading group presentations.
 
 ### 3. Business Purpose Generator (`business_purpose.yml`)
 
-Automatically generates a business purpose email draft for reimbursement processes after each meeting.
+Automatically generates a business purpose email for reimbursement processes after each meeting.
 
 **Functionality:**
 - Runs every Wednesday at 10:00 AM PT
@@ -60,22 +58,16 @@ Automatically generates a business purpose email draft for reimbursement process
 - Fetches unique email addresses from the Google Sheet for that meeting date
 - Looks up attendee names using the Stanford Account API
 - Creates a properly formatted list of attendees with Oxford comma
-- Either:
-  1. Creates a draft email in your Microsoft Exchange account
-  2. Sends you an email with the business purpose template
+- Sends you an email with the business purpose template
 
 **Required Secrets:**
 - `GOOGLE_SHEETS_CREDENTIALS`: JSON string of service account credentials
 - `SHEET_ID`: ID of your Google Sheet containing RSVPs
-- `EMAIL_USER`: Email address for sending notifications
-- `EMAIL_PASSWORD`: App password for email account
-- `NOTIFICATION_EMAIL`: Email to receive the business purpose draft
+- `GMAIL_USER`: Gmail address to send from
+- `GMAIL_APP_PASSWORD`: App password for Gmail
+- `NOTIFICATION_EMAIL`: Email to receive the business purpose email (optional, defaults to GMAIL_USER)
 - `STANFORD_API_KEY`: API key for Stanford Account API
 - `STANFORD_API_SECRET`: Secret for Stanford Account API
-- `MS_TENANT_ID`: Microsoft tenant ID (for draft creation, optional)
-- `MS_CLIENT_ID`: Microsoft app client ID (for draft creation, optional)
-- `MS_CLIENT_SECRET`: Microsoft app client secret (for draft creation, optional)
-- `SLACK_WEBHOOK_URL`: Webhook for optional Slack notifications (optional)
 
 **Files:**
 - `.github/scripts/business_purpose.js`: Script for generating the business purpose emails
@@ -93,13 +85,19 @@ Automatically generates a business purpose email draft for reimbursement process
 6. Share your Google Sheet with the service account email
 7. Add the JSON content as a GitHub secret named `GOOGLE_SHEETS_CREDENTIALS`
 
-### Email Setup for Notifications
+### Gmail Setup for Notifications
 
-1. Enable 2-Step Verification on your Gmail account
-2. Generate an App Password for this script
-3. Add the app password as GitHub secrets:
-   - `EMAIL_PASSWORD` for RSVP counting
-   - `EMAIL_PASS` for announcements
+1. Create or use an existing Gmail account for sending notifications
+2. Enable 2-Step Verification on your Gmail account
+3. Generate an App Password:
+   - Go to your Google Account
+   - Select Security
+   - Under "Signing in to Google," select App passwords
+   - Select the app (Mail) and device (Other - Name it "GitHub Actions")
+   - Click Generate
+4. Add the Gmail address and app password as GitHub secrets:
+   - `GMAIL_USER`: Your Gmail address
+   - `GMAIL_APP_PASSWORD`: The generated app password
 
 ### Stanford API Setup
 
@@ -108,15 +106,6 @@ For the Business Purpose workflow to look up user names:
 1. Request access to the Stanford Account API at https://uit.stanford.edu/developers/apis/account
 2. Get your API key and secret
 3. Add the API key and secret as GitHub secrets named `STANFORD_API_KEY` and `STANFORD_API_SECRET`
-
-### Microsoft Graph API Setup (Optional)
-
-For creating draft emails directly in your Microsoft Exchange account:
-
-1. Register an application in Azure Active Directory
-2. Grant it Mail.ReadWrite permissions
-3. Get your tenant ID, client ID, and client secret
-4. Add these as GitHub secrets named `MS_TENANT_ID`, `MS_CLIENT_ID`, and `MS_CLIENT_SECRET`
 
 ## Manual Triggers
 

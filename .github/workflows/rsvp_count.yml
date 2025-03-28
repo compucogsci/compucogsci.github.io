@@ -85,46 +85,62 @@ jobs:
         env:
           GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}
           SHEET_ID: ${{ secrets.SHEET_ID }}
-          EMAIL_USER: ${{ secrets.EMAIL_USER }}
-          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
         run: node .github/scripts/rsvp_count.js
       
-      # Send Slack notification if email is not configured but Slack is
-      - name: Send Slack notification
-        if: ${{ !env.EMAIL_USER && env.SLACK_WEBHOOK_URL }}
-        uses: 8398a7/action-slack@v3
-        with:
-          status: custom
-          custom_payload: |
-            {
-              "attachments": [
-                {
-                  "color": "good",
-                  "title": "RSVP Count for ${{ needs.check-upcoming-meeting.outputs.meeting_title }} (${{ needs.check-upcoming-meeting.outputs.meeting_date }})",
-                  "text": "Current RSVP count: ${{ steps.rsvp-count.outputs.rsvp_count }} unique attendees\n\nMeeting: ${{ needs.check-upcoming-meeting.outputs.meeting_title }}\nDate: ${{ needs.check-upcoming-meeting.outputs.meeting_date }}"
-                }
-              ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      
-      # Fallback to GitHub issue if neither email nor Slack are configured
-      - name: Create GitHub Issue with RSVP count
-        if: ${{ !env.EMAIL_USER && !env.SLACK_WEBHOOK_URL }}
+      # Check if notification issue already exists
+      - name: Check for existing notification issue
+        if: ${{ steps.rsvp-count.outputs.email_failed == 'true' }}
+        id: check-issue
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const title = `RSVP Count for ${process.env.MEETING_TITLE} (${process.env.MEETING_DATE})`;
-            const body = `Current RSVP count: ${process.env.RSVP_COUNT} unique attendees\n\nMeeting: ${process.env.MEETING_TITLE}\nDate: ${process.env.MEETING_DATE}`;
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: ['notification-failure']
+            });
+            
+            if (issues.data.length > 0) {
+              console.log('Existing notification failure issue found');
+              return true;
+            }
+            console.log('No existing notification failure issue');
+            return false;
+          result-encoding: string
+      
+      # Fallback to GitHub issue if email fails and no existing issue
+      - name: Create GitHub Issue for notification failure
+        if: ${{ steps.rsvp-count.outputs.email_failed == 'true' && steps.check-issue.outputs.result == 'false' }}
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const title = 'Email Notification System Failure';
+            const body = `
+            The email notification system is failing to send emails.
+            
+            Please check the following:
+            1. The Gmail credentials in GitHub secrets
+            2. Whether the app password is still valid
+            3. Gmail sending limits or restrictions
+            
+            Latest attempt was for: ${process.env.MEETING_TITLE} (${process.env.MEETING_DATE})
+            RSVP Count: ${process.env.RSVP_COUNT}
+            
+            Once fixed, please close this issue.
+            `;
             
             github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: title,
               body: body,
-              labels: ['rsvp-count']
+              labels: ['notification-failure', 'bug']
             });
         env:
           MEETING_TITLE: ${{ needs.check-upcoming-meeting.outputs.meeting_title }}

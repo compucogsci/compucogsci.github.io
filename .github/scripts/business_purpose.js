@@ -4,23 +4,15 @@ const path = require('path');
 const core = require('@actions/core');
 const axios = require('axios');
 const nodemailer = require('nodemailer');
-const { MicrosoftGraph } = require('@microsoft/microsoft-graph-client');
-const { TokenCredentialAuthenticationProvider } = require('@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials');
-const { ClientSecretCredential } = require('@azure/identity');
 
 // Read credentials from environment variables or GitHub secrets
 const GOOGLE_SHEETS_CREDENTIALS = JSON.parse(process.env.GOOGLE_SHEETS_CREDENTIALS);
 const SHEET_ID = process.env.SHEET_ID;
-const EMAIL_USER = process.env.EMAIL_USER;
-const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
-const RECIPIENT_EMAIL = process.env.RECIPIENT_EMAIL || EMAIL_USER;
+const GMAIL_USER = process.env.GMAIL_USER;
+const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
+const NOTIFICATION_EMAIL = process.env.NOTIFICATION_EMAIL;
 const STANFORD_API_KEY = process.env.STANFORD_API_KEY;
 const STANFORD_API_SECRET = process.env.STANFORD_API_SECRET;
-
-// Microsoft Graph API credentials (for draft email creation)
-const TENANT_ID = process.env.MS_TENANT_ID;
-const CLIENT_ID = process.env.MS_CLIENT_ID;
-const CLIENT_SECRET = process.env.MS_CLIENT_SECRET;
 
 /**
  * Find the most recent meeting that has already occurred
@@ -204,21 +196,21 @@ Thank you,
 /**
  * Send email notification
  */
-async function sendEmail(emailContent, meeting) {
+async function sendEmail(emailContent) {
   try {
-    // Create a transporter
+    // Create a Gmail transporter
     const transporter = nodemailer.createTransport({
-      service: 'gmail', // Change this if using a different service
+      service: 'gmail',
       auth: {
-        user: EMAIL_USER,
-        pass: EMAIL_PASSWORD,
+        user: GMAIL_USER,
+        pass: GMAIL_APP_PASSWORD,
       },
     });
     
     // Email content
     const mailOptions = {
-      from: EMAIL_USER,
-      to: RECIPIENT_EMAIL,
+      from: GMAIL_USER,
+      to: NOTIFICATION_EMAIL,
       subject: emailContent.subject,
       text: emailContent.body,
     };
@@ -229,58 +221,6 @@ async function sendEmail(emailContent, meeting) {
     return true;
   } catch (error) {
     console.error('Error sending email:', error);
-    return false;
-  }
-}
-
-/**
- * Create a draft email in Microsoft Exchange (via MS Graph API)
- */
-async function createDraftEmail(emailContent) {
-  try {
-    if (!TENANT_ID || !CLIENT_ID || !CLIENT_SECRET) {
-      console.log('Microsoft Graph API credentials not provided, skipping draft creation');
-      return false;
-    }
-    
-    // Initialize the client credential auth provider
-    const credential = new ClientSecretCredential(
-      TENANT_ID,
-      CLIENT_ID,
-      CLIENT_SECRET
-    );
-    
-    const authProvider = new TokenCredentialAuthenticationProvider(credential, {
-      scopes: ['https://graph.microsoft.com/Mail.ReadWrite']
-    });
-    
-    // Initialize Graph client
-    const graphClient = MicrosoftGraph.Client.initWithMiddleware({
-      authProvider
-    });
-    
-    // Create a draft message
-    const draftMessage = {
-      subject: emailContent.subject,
-      body: {
-        contentType: 'text',
-        content: emailContent.body
-      },
-      toRecipients: [
-        {
-          emailAddress: {
-            address: RECIPIENT_EMAIL
-          }
-        }
-      ]
-    };
-    
-    // Save the draft
-    await graphClient.api('/me/messages').post(draftMessage);
-    console.log('Draft email created successfully in Exchange account');
-    return true;
-  } catch (error) {
-    console.error('Error creating draft email in Exchange:', error);
     return false;
   }
 }
@@ -323,19 +263,16 @@ async function run() {
     core.setOutput('meeting_date', recentMeeting.date);
     core.setOutput('attendee_count', emails.length);
     
-    // Try to create a draft in Microsoft Exchange
-    let success = await createDraftEmail(emailContent);
-    
-    // If draft creation fails, fall back to sending email
-    if (!success && EMAIL_USER && EMAIL_PASSWORD) {
-      success = await sendEmail(emailContent, recentMeeting);
-    }
+    // Send email with Gmail
+    const success = await sendEmail(emailContent);
     
     if (!success) {
-      core.setFailed('Failed to create draft or send email');
+      core.setOutput('email_failed', 'true');
+      core.setFailed('Failed to send email');
     }
   } catch (error) {
     core.setFailed(`Error in business purpose workflow: ${error.message}`);
+    core.setOutput('email_failed', 'true');
     console.error(error);
   }
 }
