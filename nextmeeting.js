@@ -27,9 +27,21 @@ function findNextMeeting() {
     return 'TBD';
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
+    // If data is already loaded, initialize
+    if (presentations && presentations.length > 0) {
+        displayNextMeeting();
+    } else {
+        // Otherwise wait for data to load
+        document.addEventListener('presentationsLoaded', function() {
+            displayNextMeeting();
+        });
+    }
+});
+
+function displayNextMeeting() {
     const noticeElement = document.getElementById('next-meeting-notice');
     if (noticeElement) {
         noticeElement.textContent = findNextMeeting();
     }
-});
+}
