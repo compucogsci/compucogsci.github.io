@@ -47,8 +47,12 @@ function findUpcomingPresentation() {
 function generateRsvpFormUrl(meetingDate) {
   if (!GOOGLE_FORM_BASE_URL) return '';
   
-  // Format date as YYYY-MM-DD (should already be in this format, but ensuring it)
-  const formattedDate = new Date(meetingDate).toISOString().split('T')[0];
+  // Parse the date and format it as MM/DD/YYYY for the form
+  const date = new Date(meetingDate);
+  const month = date.getMonth() + 1; // getMonth() is zero-based
+  const day = date.getDate();
+  const year = date.getFullYear();
+  const formattedDate = `${month}/${day}/${year}`;
   
   // Append the date to the base URL
   // The base URL should end with something like "entry.123456789="

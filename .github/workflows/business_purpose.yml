@@ -32,8 +32,6 @@ jobs:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
-          STANFORD_API_KEY: ${{ secrets.STANFORD_API_KEY }}
-          STANFORD_API_SECRET: ${{ secrets.STANFORD_API_SECRET }}
         run: node .github/scripts/business_purpose.js
       
       # Check if notification issue already exists

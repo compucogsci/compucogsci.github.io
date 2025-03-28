@@ -55,8 +55,8 @@ Automatically generates a business purpose email for reimbursement processes aft
 **Functionality:**
 - Runs every Wednesday at 10:00 AM PT
 - Identifies the most recent meeting that has occurred
-- Fetches unique email addresses from the Google Sheet for that meeting date
-- Looks up attendee names using the Stanford Account API
+- Fetches unique attendee information from the Google Sheet for that meeting date
+- Uses first and last names from the RSVP form responses
 - Creates a properly formatted list of attendees with Oxford comma
 - Sends you an email with the business purpose template
 
@@ -66,12 +66,23 @@ Automatically generates a business purpose email for reimbursement processes aft
 - `GMAIL_USER`: Gmail address to send from
 - `GMAIL_APP_PASSWORD`: App password for Gmail
 - `NOTIFICATION_EMAIL`: Email to receive the business purpose email (optional, defaults to GMAIL_USER)
-- `STANFORD_API_KEY`: API key for Stanford Account API
-- `STANFORD_API_SECRET`: Secret for Stanford Account API
 
 **Files:**
 - `.github/scripts/business_purpose.js`: Script for generating the business purpose emails
 - `.github/workflows/business_purpose.yml`: Workflow definition file
+
+### Google Sheet Structure
+
+The RSVP Google Sheet should contain the following columns:
+- `Email Address`: Email addresses of attendees
+- `You are RSVP'ing for our meeting on:`: Meeting date in M/D/YYYY format (e.g., "4/1/2025")
+- `First name:`: First name of the attendee
+- `Surname:`: Last name of the attendee
+
+Note: The system can handle dates in various formats including:
+- M/D/YYYY (e.g., "4/1/2025")
+- MM/DD/YYYY (e.g., "04/01/2025")
+- YYYY-MM-DD (e.g., "2025-04-01")
 
 ## Setup Instructions
 

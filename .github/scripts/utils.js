@@ -127,6 +127,52 @@ function getGoogleSheetsClient(credentials) {
 }
 
 /**
+ * Parse and normalize various date formats to ISO format (YYYY-MM-DD)
+ */
+function normalizeDate(dateString) {
+  if (!dateString) return null;
+  
+  // Handle MM/DD/YYYY format (e.g., 4/1/2025)
+  if (dateString.includes('/')) {
+    const parts = dateString.split('/');
+    // Ensure we have exactly 3 parts
+    if (parts.length === 3) {
+      const month = parts[0].padStart(2, '0');
+      const day = parts[1].padStart(2, '0');
+      const year = parts[2];
+      return `${year}-${month}-${day}`;
+    }
+  }
+  
+  // If it's already in YYYY-MM-DD format, return as is
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+    return dateString;
+  }
+  
+  // Try to parse as a JavaScript Date and convert to ISO format
+  try {
+    const date = new Date(dateString);
+    if (!isNaN(date.getTime())) {
+      return date.toISOString().split('T')[0];
+    }
+  } catch (e) {
+    console.error(`Failed to parse date: ${dateString}`);
+  }
+  
+  return dateString; // Return original if we can't parse it
+}
+
+/**
+ * Compare if two date strings represent the same date, handling multiple formats
+ */
+function areDatesEqual(date1, date2) {
+  const normalizedDate1 = normalizeDate(date1);
+  const normalizedDate2 = normalizeDate(date2);
+  
+  return normalizedDate1 === normalizedDate2;
+}
+
+/**
  * Get unique emails from a Google Sheet for a specific meeting date
  */
 async function getUniqueEmailsForMeeting(credentials, sheetId, meetingDate) {
@@ -158,10 +204,14 @@ async function getUniqueEmailsForMeeting(credentials, sheetId, meetingDate) {
     
     // Get unique emails for the specified meeting date
     const uniqueEmails = new Set();
+    const normalizedTargetDate = normalizeDate(meetingDate);
     
     rows.slice(1).forEach(row => {
-      if (row[dateColIndex] === meetingDate && row[emailColIndex]) {
-        uniqueEmails.add(row[emailColIndex].toLowerCase().trim());
+      if (row[dateColIndex] && row[emailColIndex]) {
+        const normalizedRowDate = normalizeDate(row[dateColIndex]);
+        if (normalizedRowDate === normalizedTargetDate) {
+          uniqueEmails.add(row[emailColIndex].toLowerCase().trim());
+        }
       }
     });
     
@@ -169,6 +219,80 @@ async function getUniqueEmailsForMeeting(credentials, sheetId, meetingDate) {
     return Array.from(uniqueEmails);
   } catch (error) {
     console.error('Error fetching emails from spreadsheet:', error);
+    return [];
+  }
+}
+
+/**
+ * Get unique attendees with their names from a Google Sheet for a specific meeting date
+ */
+async function getAttendeesForMeeting(credentials, sheetId, meetingDate) {
+  try {
+    const sheets = getGoogleSheetsClient(credentials);
+    
+    // Get spreadsheet data
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: sheetId,
+      range: 'A:Z', // Fetch all columns
+    });
+    
+    const rows = response.data.values;
+    
+    if (!rows || rows.length === 0) {
+      console.log('No data found in the spreadsheet.');
+      return [];
+    }
+    
+    // Find column indices
+    const headers = rows[0];
+    const emailColIndex = headers.findIndex(col => col === 'Email Address');
+    const dateColIndex = headers.findIndex(col => col === 'You are RSVP\'ing for our meeting on:');
+    const firstNameColIndex = headers.findIndex(col => col === 'First name:');
+    const surnameColIndex = headers.findIndex(col => col === 'Surname:');
+    
+    if (emailColIndex === -1 || dateColIndex === -1) {
+      console.error('Could not find required columns in spreadsheet');
+      return [];
+    }
+    
+    // Track unique attendees by email
+    const uniqueAttendees = new Map();
+    const normalizedTargetDate = normalizeDate(meetingDate);
+    
+    rows.slice(1).forEach(row => {
+      if (row[dateColIndex] && row[emailColIndex]) {
+        const normalizedRowDate = normalizeDate(row[dateColIndex]);
+        if (normalizedRowDate === normalizedTargetDate) {
+          const email = row[emailColIndex].toLowerCase().trim();
+          
+          // Only add if not already in the map
+          if (!uniqueAttendees.has(email)) {
+            const firstName = (firstNameColIndex !== -1 && row[firstNameColIndex]) ? row[firstNameColIndex].trim() : '';
+            const surname = (surnameColIndex !== -1 && row[surnameColIndex]) ? row[surnameColIndex].trim() : '';
+            
+            let name;
+            if (firstName && surname) {
+              name = `${firstName} ${surname}`;
+            } else if (firstName) {
+              name = firstName;
+            } else if (surname) {
+              name = surname;
+            } else {
+              // Fallback to email username
+              name = email.split('@')[0];
+            }
+            
+            uniqueAttendees.set(email, { email, name });
+          }
+        }
+      }
+    });
+    
+    const attendees = Array.from(uniqueAttendees.values());
+    console.log(`Found ${attendees.length} unique attendees for meeting date: ${meetingDate}`);
+    return attendees;
+  } catch (error) {
+    console.error('Error fetching attendees from spreadsheet:', error);
     return [];
   }
 }
@@ -204,28 +328,36 @@ async function getLatestRsvpCount(credentials, sheetId) {
       return null;
     }
     
-    // Get the latest RSVP date
-    const meetingDates = rows.slice(1)
-      .map(row => row[dateColIndex])
-      .filter(date => date); // Filter out empty dates
+    // Get the latest RSVP date, comparing dates after normalizing
+    let latestNormalizedDate = '';
+    let latestOriginalDate = '';
     
-    const latestDate = meetingDates.reduce((latest, current) => {
-      return latest >= current ? latest : current;
-    }, '');
+    rows.slice(1).forEach(row => {
+      if (row[dateColIndex]) {
+        const normalizedDate = normalizeDate(row[dateColIndex]);
+        if (!latestNormalizedDate || normalizedDate > latestNormalizedDate) {
+          latestNormalizedDate = normalizedDate;
+          latestOriginalDate = row[dateColIndex];
+        }
+      }
+    });
     
-    if (!latestDate) {
+    if (!latestOriginalDate) {
       console.log('No RSVP dates found in the spreadsheet.');
       return null;
     }
     
-    console.log(`Latest RSVP date: ${latestDate}`);
+    console.log(`Latest RSVP date: ${latestOriginalDate} (normalized: ${latestNormalizedDate})`);
     
     // Count unique emails for the latest date
     const uniqueEmails = new Set();
     
     rows.slice(1).forEach(row => {
-      if (row[dateColIndex] === latestDate && row[emailColIndex]) {
-        uniqueEmails.add(row[emailColIndex].toLowerCase().trim());
+      if (row[dateColIndex] && row[emailColIndex]) {
+        const normalizedRowDate = normalizeDate(row[dateColIndex]);
+        if (normalizedRowDate === latestNormalizedDate) {
+          uniqueEmails.add(row[emailColIndex].toLowerCase().trim());
+        }
       }
     });
     
@@ -234,7 +366,8 @@ async function getLatestRsvpCount(credentials, sheetId) {
     
     return {
       count: count,
-      date: latestDate,
+      date: latestOriginalDate,
+      normalizedDate: latestNormalizedDate,
       emails: Array.from(uniqueEmails)
     };
   } catch (error) {
@@ -271,6 +404,9 @@ module.exports = {
   sendEmail,
   getGoogleSheetsClient,
   getUniqueEmailsForMeeting,
+  getAttendeesForMeeting,
   getLatestRsvpCount,
-  formatNamesList
+  formatNamesList,
+  normalizeDate,
+  areDatesEqual,
 };
