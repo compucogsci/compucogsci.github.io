@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const utils = require('./utils');
+const doiUtils = require('./doi_utils');
 
 // Environment variables
 const GMAIL_USER = process.env.GMAIL_USER;
@@ -55,6 +56,86 @@ function generateRsvpFormUrl(meetingDate) {
   return `${GOOGLE_FORM_BASE_URL}${encodeURIComponent(formattedDate)}`;
 }
 
+/**
+ * Check if a URL is a DOI link
+ */
+function isDOILink(url) {
+  return url && (
+    url.startsWith('https://doi.org/') || 
+    url.startsWith('http://doi.org/') || 
+    url.startsWith('doi.org/') ||
+    /^10\.\d{4,}\/[-._;()/:A-Z0-9]+$/i.test(url) // DOI pattern without URL
+  );
+}
+
+/**
+ * Extract DOI from a URL or DOI string
+ */
+function extractDOI(doiString) {
+  if (!doiString) return null;
+  
+  // If it's a full DOI URL, extract just the DOI part
+  if (doiString.includes('doi.org/')) {
+    const parts = doiString.split('doi.org/');
+    return parts[1];
+  }
+  
+  // If it's already just a DOI (e.g., "10.1038/nature09210")
+  if (/^10\.\d{4,}\/[-._;()/:A-Z0-9]+$/i.test(doiString)) {
+    return doiString;
+  }
+  
+  return null;
+}
+
+/**
+ * Generate formatted paper info for email
+ * Returns { paperLink, paperTitle, paperShortAPACite }
+ */
+async function formatPaperInfo(presentation) {
+  // Default values using the first paper
+  let paperLink = '';
+  let paperTitle = '';
+  let paperShortAPACite = '';
+  let hasMultiplePapers = presentation.links.length > 1;
+  
+  // Get the first paper info
+  if (presentation.links.length > 0) {
+    const firstLink = presentation.links[0];
+    paperLink = firstLink.url;
+    
+    // If it's a DOI link, get metadata
+    if (isDOILink(firstLink.url)) {
+      try {
+        const doi = extractDOI(firstLink.url);
+        if (doi) {
+          const metadata = await doiUtils.getAPACitationFromDOI(doi);
+          if (metadata && metadata.title) {
+            paperTitle = metadata.title;
+            // Create short citation (Author, Year) format
+            paperShortAPACite = metadata.authors && metadata.year ? 
+              `(${metadata.authors}, ${metadata.year})` : '';
+          }
+        }
+      } catch (error) {
+        console.error('Error getting DOI metadata:', error);
+      }
+    }
+    
+    // Use link text as fallback for paper title
+    if (!paperTitle) {
+      paperTitle = firstLink.text.replace(/^Paper \d+: /i, ''); // Remove "Paper X: " prefix if present
+    }
+  }
+  
+  return {
+    paperLink,
+    paperTitle,
+    paperShortAPACite,
+    hasMultiplePapers
+  };
+}
+
 // Create and send the email
 async function sendReminderEmail() {
   const upcomingPresentation = findUpcomingPresentation();
@@ -66,6 +147,10 @@ async function sendReminderEmail() {
 
   console.log(`Found upcoming presentation by ${upcomingPresentation.presenter}`);
 
+  // Get formatted paper info
+  const { paperLink, paperTitle, paperShortAPACite, hasMultiplePapers } = 
+    await formatPaperInfo(upcomingPresentation);
+
   // Create email content
   const presenter = upcomingPresentation.presenter;
   const title = upcomingPresentation.title;
@@ -76,11 +161,6 @@ async function sendReminderEmail() {
     day: 'numeric',
     year: 'numeric'
   });
-  
-  // Format links section
-  const links = upcomingPresentation.links.map(link => 
-    `<li><a href="${link.url}">${link.text}</a></li>`
-  ).join('\n');
 
   // Generate the dynamic RSVP form URL
   const rsvpFormUrl = generateRsvpFormUrl(upcomingPresentation.date);
@@ -89,9 +169,13 @@ async function sendReminderEmail() {
   const googleFormSentence = rsvpFormUrl ? 
     `Please <strong><a href="${rsvpFormUrl}">RSVP here</a> by Monday 10am</strong>
      if you plan on attending!` : '';
+  
+  // Add additional papers sentence if there are multiple papers
+  const additionalPapersText = hasMultiplePapers ? 
+    ' Additional papers can be found on our website.' : '';
 
   const emailSubject = `[compcogsci] Next meeting ${formattedDate}: ${title} with ${presenter}`;
-  // FIXME: fix paper title, short APA citation, and link. Also handle multiple papers case
+  
   const emailBody = `
   <html>
   <body>
@@ -105,8 +189,9 @@ async function sendReminderEmail() {
     </p>
 
     <p>
-    This session will be led by <strong>${presenter}</strong> on "${paperTitle}".
-     We ask that everyone attending attempt to read the paper to be discussed before the meeting.
+    This session will be led by <strong>${presenter}</strong> on
+     <a href="${paperLink}">"${paperTitle}" ${paperShortAPACite}</a>.
+     We ask that everyone attending attempt to read the paper to be discussed before the meeting.${additionalPapersText}
     </p>
 
     <p>
@@ -151,5 +236,8 @@ if (require.main === module) {
 module.exports = {
   findUpcomingPresentation,
   sendReminderEmail,
-  generateRsvpFormUrl  // Export for testing
+  generateRsvpFormUrl,  // Export for testing
+  isDOILink,
+  extractDOI,
+  formatPaperInfo
 };
