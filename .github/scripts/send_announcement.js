@@ -191,12 +191,13 @@ async function sendReminderEmail() {
     <p>
     This session will be led by <strong>${presenter}</strong> on
      <a href="${paperLink}">"${paperTitle}" ${paperShortAPACite}</a>.
-     We ask that everyone attending attempt to read the paper to be discussed before the meeting.${additionalPapersText}
+     We ask that everyone attending attempt to read the paper to be discussed before the meeting.
+    ${additionalPapersText}
     </p>
 
     <p>
-    More information, including extra paper links, club schedule, and future speakers can be found
-     on our website viewable <a href="https://compucogsci.github.io/schedule.html">here</a>.
+    More information, including extra paper links, schedule, and future speakers can be found
+     on our website viewable <a href="https://compucogsci.github.io">here</a>.
     </p>
 
     <p>

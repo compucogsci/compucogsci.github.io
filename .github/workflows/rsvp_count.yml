@@ -4,7 +4,8 @@ on:
   schedule:
     # Run every Monday at 11:30 AM PT (18:30 UTC during standard time, 19:30 UTC during daylight saving time)
     # Using 18:30 UTC which will be 11:30 AM PT during standard time (winter) and 10:30 AM PT during DST
-    - cron: '30 18 * * 1'
+    # temporarily disable
+    #- cron: '30 18 * * 1'
   workflow_dispatch: # Allow manual triggering for testing
 
 jobs:

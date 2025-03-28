@@ -3,7 +3,8 @@ name: Generate Business Purpose Email
 on:
   schedule:
     # Run every Wednesday at 10:00 AM PT (17:00 UTC during standard time, 18:00 UTC during daylight saving time)
-    - cron: '0 17 * * 3'
+    # temporarily disable
+    #- cron: '0 17 * * 3'
   workflow_dispatch: # Allow manual triggering for testing
 
 jobs:
