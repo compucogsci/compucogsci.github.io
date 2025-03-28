@@ -77,8 +77,8 @@ jobs:
           node-version: '18'
       
       - name: Install dependencies
-        run: |
-          npm install googleapis @actions/core nodemailer
+        working-directory: .github/scripts
+        run: npm install
       
       - name: Run RSVP count script
         id: rsvp-count

@@ -1,101 +1,15 @@
-const { google } = require('googleapis');
-const fs = require('fs');
-const path = require('path');
 const core = require('@actions/core');
 const axios = require('axios');
-const nodemailer = require('nodemailer');
+const utils = require('./utils');
 
 // Read credentials from environment variables or GitHub secrets
 const GOOGLE_SHEETS_CREDENTIALS = JSON.parse(process.env.GOOGLE_SHEETS_CREDENTIALS);
 const SHEET_ID = process.env.SHEET_ID;
 const GMAIL_USER = process.env.GMAIL_USER;
 const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
-const NOTIFICATION_EMAIL = process.env.NOTIFICATION_EMAIL;
+const NOTIFICATION_EMAIL = process.env.NOTIFICATION_EMAIL || GMAIL_USER;
 const STANFORD_API_KEY = process.env.STANFORD_API_KEY;
 const STANFORD_API_SECRET = process.env.STANFORD_API_SECRET;
-
-/**
- * Find the most recent meeting that has already occurred
- */
-async function getMostRecentMeeting() {
-  const presentationsPath = path.join(process.cwd(), 'presentations.json');
-  const presentations = JSON.parse(fs.readFileSync(presentationsPath, 'utf8'));
-  
-  const today = new Date();
-  
-  // Find the most recent meeting in the past (including today)
-  const pastMeetings = presentations
-    .filter(p => {
-      const meetingDate = new Date(p.date);
-      meetingDate.setHours(23, 59, 59); // End of meeting day
-      return meetingDate <= today;
-    })
-    .sort((a, b) => new Date(b.date) - new Date(a.date));
-  
-  if (pastMeetings.length === 0) {
-    console.log('No past meetings found.');
-    return null;
-  }
-  
-  const mostRecent = pastMeetings[0];
-  console.log(`Found most recent meeting: ${mostRecent.title} on ${mostRecent.date}`);
-  return mostRecent;
-}
-
-/**
- * Get unique email addresses from the Google Sheet for a specific meeting date
- */
-async function getUniqueEmailsForMeeting(meetingDate) {
-  try {
-    // Set up auth with Google Sheets
-    const auth = new google.auth.JWT(
-      GOOGLE_SHEETS_CREDENTIALS.client_email,
-      null,
-      GOOGLE_SHEETS_CREDENTIALS.private_key,
-      ['https://www.googleapis.com/auth/spreadsheets.readonly']
-    );
-    
-    const sheets = google.sheets({ version: 'v4', auth });
-    
-    // Get spreadsheet data
-    const response = await sheets.spreadsheets.values.get({
-      spreadsheetId: SHEET_ID,
-      range: 'A:Z', // Fetch all columns
-    });
-    
-    const rows = response.data.values;
-    
-    if (!rows || rows.length === 0) {
-      console.log('No data found in the spreadsheet.');
-      return [];
-    }
-    
-    // Find column indices
-    const headers = rows[0];
-    const emailColIndex = headers.findIndex(col => col === 'Email Address');
-    const dateColIndex = headers.findIndex(col => col === 'You are RSVP\'ing for our meeting on:');
-    
-    if (emailColIndex === -1 || dateColIndex === -1) {
-      console.error('Could not find required columns in spreadsheet');
-      return [];
-    }
-    
-    // Get unique emails for the specified meeting date
-    const uniqueEmails = new Set();
-    
-    rows.slice(1).forEach(row => {
-      if (row[dateColIndex] === meetingDate && row[emailColIndex]) {
-        uniqueEmails.add(row[emailColIndex].toLowerCase().trim());
-      }
-    });
-    
-    console.log(`Found ${uniqueEmails.size} unique emails for meeting date: ${meetingDate}`);
-    return Array.from(uniqueEmails);
-  } catch (error) {
-    console.error('Error fetching emails from spreadsheet:', error);
-    return [];
-  }
-}
 
 /**
  * Look up Stanford user information by email
@@ -153,24 +67,6 @@ async function lookupUsersByEmail(emails) {
 }
 
 /**
- * Format names with proper comma separation and Oxford comma
- */
-function formatNamesList(users) {
-  const names = users.map(user => user.name);
-  
-  if (names.length === 0) {
-    return '';
-  } else if (names.length === 1) {
-    return names[0];
-  } else if (names.length === 2) {
-    return `${names[0]} and ${names[1]}`;
-  } else {
-    const lastIndex = names.length - 1;
-    return `${names.slice(0, lastIndex).join(', ')}, and ${names[lastIndex]}`;
-  }
-}
-
-/**
  * Generate the business purpose draft email
  */
 function generateBusinessPurposeEmail(meeting, formattedNamesList) {
@@ -193,43 +89,11 @@ Thank you,
   };
 }
 
-/**
- * Send email notification
- */
-async function sendEmail(emailContent) {
-  try {
-    // Create a Gmail transporter
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: GMAIL_USER,
-        pass: GMAIL_APP_PASSWORD,
-      },
-    });
-    
-    // Email content
-    const mailOptions = {
-      from: GMAIL_USER,
-      to: NOTIFICATION_EMAIL,
-      subject: emailContent.subject,
-      text: emailContent.body,
-    };
-    
-    // Send the email
-    await transporter.sendMail(mailOptions);
-    console.log('Business purpose email sent successfully');
-    return true;
-  } catch (error) {
-    console.error('Error sending email:', error);
-    return false;
-  }
-}
-
 // Main function to run the business purpose workflow
 async function run() {
   try {
     // Get the most recent meeting that has occurred
-    const recentMeeting = await getMostRecentMeeting();
+    const recentMeeting = utils.findMostRecentMeeting();
     
     if (!recentMeeting) {
       console.log('No recent meetings found to process.');
@@ -237,7 +101,11 @@ async function run() {
     }
     
     // Get unique emails for the meeting
-    const emails = await getUniqueEmailsForMeeting(recentMeeting.date);
+    const emails = await utils.getUniqueEmailsForMeeting(
+      GOOGLE_SHEETS_CREDENTIALS, 
+      SHEET_ID, 
+      recentMeeting.date
+    );
     
     if (emails.length === 0) {
       console.log('No attendees found for the meeting.');
@@ -248,7 +116,8 @@ async function run() {
     const users = await lookupUsersByEmail(emails);
     
     // Format names list with proper commas
-    const formattedNamesList = formatNamesList(users);
+    const names = users.map(user => user.name);
+    const formattedNamesList = utils.formatNamesList(names);
     
     // Generate the business purpose email content
     const emailContent = generateBusinessPurposeEmail(recentMeeting, formattedNamesList);
@@ -264,7 +133,13 @@ async function run() {
     core.setOutput('attendee_count', emails.length);
     
     // Send email with Gmail
-    const success = await sendEmail(emailContent);
+    const success = await utils.sendEmail(
+      GMAIL_USER,
+      GMAIL_APP_PASSWORD,
+      NOTIFICATION_EMAIL,
+      emailContent.subject,
+      emailContent.body
+    );
     
     if (!success) {
       core.setOutput('email_failed', 'true');
@@ -283,10 +158,7 @@ if (require.main === module) {
 }
 
 module.exports = {
-  getMostRecentMeeting,
-  getUniqueEmailsForMeeting,
   lookupUsersByEmail,
-  formatNamesList,
   generateBusinessPurposeEmail,
   run
 };

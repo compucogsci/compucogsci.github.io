@@ -1,33 +1,15 @@
 const fs = require('fs');
-const nodemailer = require('nodemailer');
 const path = require('path');
+const utils = require('./utils');
 
-// Function to get presentations data from JSON file
-function getPresentation() {
-  // Read the presentations JSON file
-  const presentationsFilePath = path.join(process.cwd(), 'presentations.json');
-  try {
-    const presentationsContent = fs.readFileSync(presentationsFilePath, 'utf8');
-    const presentations = JSON.parse(presentationsContent);
-    return presentations;
-  } catch (error) {
-    console.error('Error reading or parsing presentations data:', error);
-    process.exit(1);
-  }
-}
+// Environment variables
+const GMAIL_USER = process.env.GMAIL_USER;
+const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
+const NOTIFICATION_EMAIL = process.env.NOTIFICATION_EMAIL || GMAIL_USER;
+const GOOGLE_FORM_URL = process.env.GOOGLE_FORM_URL;
 
 // Find presentation that's exactly 7 days away
 function findUpcomingPresentation() {
-  const presentations = getPresentation();
-  
-  const today = new Date();
-  const targetDate = new Date();
-  targetDate.setDate(today.getDate() + 7); // 7 days from now
-
-  const targetDateStr = targetDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
-  
-  console.log(`Looking for presentation scheduled on: ${targetDateStr}`);
-  
   // Check if we've already sent a reminder for this date (to prevent duplicate emails)
   const reminderLogPath = path.join(process.cwd(), '.github', 'reminder-log.json');
   let sentReminders = {};
@@ -40,20 +22,23 @@ function findUpcomingPresentation() {
     }
   }
   
-  if (sentReminders[targetDateStr]) {
-    console.log(`Already sent reminder for ${targetDateStr}`);
-    return null;
-  }
-  
-  const upcomingPresentation = presentations.find(p => p.date === targetDateStr);
+  // Look for a presentation scheduled 7 days from today
+  const upcomingPresentation = utils.findMeetingDaysFromNow(7);
   
   if (upcomingPresentation) {
+    // Check if we already sent a reminder for this date
+    if (sentReminders[upcomingPresentation.date]) {
+      console.log(`Already sent reminder for ${upcomingPresentation.date}`);
+      return null;
+    }
+    
     // Log that we're going to send a reminder for this date
-    sentReminders[targetDateStr] = new Date().toISOString();
+    sentReminders[upcomingPresentation.date] = new Date().toISOString();
     fs.writeFileSync(reminderLogPath, JSON.stringify(sentReminders, null, 2));
+    return upcomingPresentation;
   }
   
-  return upcomingPresentation;
+  return null;
 }
 
 // Create and send the email
@@ -62,7 +47,7 @@ async function sendReminderEmail() {
 
   if (!upcomingPresentation) {
     console.log('No presentation scheduled for 7 days from now.');
-    return;
+    return true; // Not an error case
   }
 
   console.log(`Found upcoming presentation by ${upcomingPresentation.presenter}`);
@@ -84,8 +69,8 @@ async function sendReminderEmail() {
   ).join('\n');
 
   // Include Google Form pre-filled URL if provided
-  const googleFormSection = process.env.GOOGLE_FORM_URL ? 
-    `<p>Please fill out <a href="${process.env.GOOGLE_FORM_URL}">this form</a> if you plan to attend.</p>` : '';
+  const googleFormSection = GOOGLE_FORM_URL ? 
+    `<p>Please fill out <a href="${GOOGLE_FORM_URL}">this form</a> if you plan to attend.</p>` : '';
 
   const emailSubject = `Reminder: ${presenter} presenting "${title}" on ${formattedDate}`;
   const emailBody = `
@@ -110,35 +95,30 @@ async function sendReminderEmail() {
   </html>
   `;
 
-  // Setup Gmail transporter instead of Microsoft Exchange
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.GMAIL_USER,
-      pass: process.env.GMAIL_APP_PASSWORD,
-    }
-  });
-
-  // Send the email
-  try {
-    const info = await transporter.sendMail({
-      from: process.env.GMAIL_USER,
-      to: process.env.NOTIFICATION_EMAIL,
-      subject: emailSubject,
-      html: emailBody,
-    });
-    
-    console.log(`Email sent: ${info.messageId}`);
-    return true;
-  } catch (error) {
-    console.error('Error sending email:', error);
-    console.error('Error details:', error.message);
-    return false;
-  }
+  // Send the email using the utility function (with isHtml=true)
+  return await utils.sendEmail(GMAIL_USER, GMAIL_APP_PASSWORD, NOTIFICATION_EMAIL, emailSubject, emailBody, true);
 }
 
 // Run the main function
-const result = sendReminderEmail();
-if (!result) {
-  process.exit(1); // Signal failure to GitHub Actions
+async function run() {
+  try {
+    const success = await sendReminderEmail();
+    if (!success) {
+      console.error('Failed to send email reminder');
+      process.exit(1);
+    }
+  } catch (error) {
+    console.error('Error in send_announcement script:', error);
+    process.exit(1);
+  }
 }
+
+// Run if called directly
+if (require.main === module) {
+  run();
+}
+
+module.exports = {
+  findUpcomingPresentation,
+  sendReminderEmail
+};
