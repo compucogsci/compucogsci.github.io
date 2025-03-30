@@ -240,7 +240,7 @@ let presentations = [
     {
         "title": "Explanatory models in neuroscience",
         "presenter": "Atlas Kazemian",
-        "date": "2025-04-08",
+        "date": "2025-04-15",
         "summary": "TBD",
         "links": [{
             "text": "Explanatory models in neuroscience, Part 1: Taking mechanistic abstraction seriously",
