@@ -243,10 +243,6 @@ let presentations = [
         "date": "2025-04-15",
         "summary": "TBD",
         "links": [{
-            "text": "Explanatory models in neuroscience, Part 1: Taking mechanistic abstraction seriously",
-            "url": "https://doi.org/10.1016/j.cogsys.2024.101244"
-        },
-        {
             "text": "Explanatory models in neuroscience: Part 2 -- constraint-based intelligibility",
             "url": "https://doi.org/10.48550/arXiv.2104.01489"
         },]
