@@ -9,12 +9,12 @@ const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
 const NOTIFICATION_EMAIL = process.env.NOTIFICATION_EMAIL || GMAIL_USER;
 const GOOGLE_FORM_BASE_URL = process.env.GOOGLE_FORM_BASE_URL;
 
-// Find presentation that's exactly 8 days away
+// Find the next upcoming presentation within the coming week
 function findUpcomingPresentation() {
   // Check if we've already sent a reminder for this date (to prevent duplicate emails)
   const reminderLogPath = path.join(process.cwd(), '.github', 'reminder-log.json');
   let sentReminders = {};
-  
+
   if (fs.existsSync(reminderLogPath)) {
     try {
       sentReminders = JSON.parse(fs.readFileSync(reminderLogPath, 'utf8'));
@@ -22,23 +22,39 @@ function findUpcomingPresentation() {
       console.log('Warning: Could not read reminder log, will proceed anyway.');
     }
   }
-  
-  // Look for a presentation scheduled 8 days from today
-  const upcomingPresentation = utils.findMeetingDaysFromNow(8);
-  
-  if (upcomingPresentation) {
+
+  // Calculate the date range for the coming 2 weeks
+  const today = new Date();
+  const nextWeek = new Date(today);
+  nextWeek.setDate(today.getDate() + 14);
+
+  // Load all presentations
+  const presentations = utils.loadPresentations();
+
+  // Filter presentations occurring in the next week and sort by date
+  const upcomingPresentations = presentations
+    .filter(p => {
+      const meetingDate = new Date(p.date);
+      return meetingDate >= today && meetingDate <= nextWeek;
+    })
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  // Get the earliest upcoming presentation (the next one to occur)
+  const nextPresentation = upcomingPresentations.length > 0 ? upcomingPresentations[0] : null;
+
+  if (nextPresentation) {
     // Check if we already sent a reminder for this date
-    if (sentReminders[upcomingPresentation.date]) {
-      console.log(`Already sent reminder for ${upcomingPresentation.date}`);
+    if (sentReminders[nextPresentation.date]) {
+      console.log(`Already sent reminder for ${nextPresentation.date}`);
       return null;
     }
-    
+
     // Log that we're going to send a reminder for this date
-    sentReminders[upcomingPresentation.date] = new Date().toISOString();
+    sentReminders[nextPresentation.date] = new Date().toISOString();
     fs.writeFileSync(reminderLogPath, JSON.stringify(sentReminders, null, 2));
-    return upcomingPresentation;
+    return nextPresentation;
   }
-  
+
   return null;
 }
 
@@ -47,11 +63,11 @@ function findUpcomingPresentation() {
  */
 function generateRsvpFormUrl(meetingDate) {
   if (!GOOGLE_FORM_BASE_URL) return '';
-  
+
   // Format date as YYYY-MM-DD using toISOString() and extracting the date part
   const date = new Date(meetingDate);
   const formattedDate = date.toISOString().split('T')[0]; // Gets YYYY-MM-DD part
-  
+
   // Append the date to the base URL
   return `${GOOGLE_FORM_BASE_URL}${encodeURIComponent(formattedDate)}`;
 }
@@ -61,8 +77,8 @@ function generateRsvpFormUrl(meetingDate) {
  */
 function isDOILink(url) {
   return url && (
-    url.startsWith('https://doi.org/') || 
-    url.startsWith('http://doi.org/') || 
+    url.startsWith('https://doi.org/') ||
+    url.startsWith('http://doi.org/') ||
     url.startsWith('doi.org/') ||
     /^10\.\d{4,}\/[-._;()/:A-Z0-9]+$/i.test(url) // DOI pattern without URL
   );
@@ -73,18 +89,18 @@ function isDOILink(url) {
  */
 function extractDOI(doiString) {
   if (!doiString) return null;
-  
+
   // If it's a full DOI URL, extract just the DOI part
   if (doiString.includes('doi.org/')) {
     const parts = doiString.split('doi.org/');
     return parts[1];
   }
-  
+
   // If it's already just a DOI (e.g., "10.1038/nature09210")
   if (/^10\.\d{4,}\/[-._;()/:A-Z0-9]+$/i.test(doiString)) {
     return doiString;
   }
-  
+
   return null;
 }
 
@@ -98,12 +114,12 @@ async function formatPaperInfo(presentation) {
   let paperTitle = '';
   let paperShortAPACite = '';
   let hasMultiplePapers = presentation.links.length > 1;
-  
+
   // Get the first paper info
   if (presentation.links.length > 0) {
     const firstLink = presentation.links[0];
     paperLink = firstLink.url;
-    
+
     // If it's a DOI link, get metadata
     if (isDOILink(firstLink.url)) {
       try {
@@ -113,7 +129,7 @@ async function formatPaperInfo(presentation) {
           if (metadata && metadata.title) {
             paperTitle = metadata.title;
             // Create short citation (Author, Year) format
-            paperShortAPACite = metadata.authors && metadata.year ? 
+            paperShortAPACite = metadata.authors && metadata.year ?
               `(${metadata.authors}, ${metadata.year})` : '';
           }
         }
@@ -121,13 +137,13 @@ async function formatPaperInfo(presentation) {
         console.error('Error getting DOI metadata:', error);
       }
     }
-    
+
     // Use link text as fallback for paper title
     if (!paperTitle) {
       paperTitle = firstLink.text.replace(/^Paper \d+: /i, ''); // Remove "Paper X: " prefix if present
     }
   }
-  
+
   return {
     paperLink,
     paperTitle,
@@ -141,41 +157,41 @@ async function sendReminderEmail() {
   const upcomingPresentation = findUpcomingPresentation();
 
   if (!upcomingPresentation) {
-    console.log('No presentation scheduled for 8 days from now.');
+    console.log('No presentation scheduled within the next week.');
     return true; // Not an error case
   }
 
   console.log(`Found upcoming presentation by ${upcomingPresentation.presenter}`);
 
   // Get formatted paper info
-  const { paperLink, paperTitle, paperShortAPACite, hasMultiplePapers } = 
+  const { paperLink, paperTitle, paperShortAPACite, hasMultiplePapers } =
     await formatPaperInfo(upcomingPresentation);
 
   // Create email content
   const presenter = upcomingPresentation.presenter;
   const title = upcomingPresentation.title;
   const date = new Date(upcomingPresentation.date);
-  const formattedDate = date.toLocaleDateString('en-US', { 
-    weekday: 'long', 
-    month: 'long', 
+  const formattedDate = date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
     day: 'numeric',
     year: 'numeric'
   });
 
   // Generate the dynamic RSVP form URL
   const rsvpFormUrl = generateRsvpFormUrl(upcomingPresentation.date);
-  
+
   // Include Google Form pre-filled URL if generated
-  const googleFormSentence = rsvpFormUrl ? 
+  const googleFormSentence = rsvpFormUrl ?
     `Please <strong><a href="${rsvpFormUrl}">RSVP here</a> by Monday 10am</strong>
      if you plan on attending!` : '';
-  
+
   // Add additional papers sentence if there are multiple papers
-  const additionalPapersText = hasMultiplePapers ? 
+  const additionalPapersText = hasMultiplePapers ?
     ' Additional papers can be found on our website.' : '';
 
   const emailSubject = `[compcogsci] Next meeting ${formattedDate}: ${title} with ${presenter}`;
-  
+
   const emailBody = `
   <html>
   <body>
@@ -203,7 +219,7 @@ async function sendReminderEmail() {
     <p>
     Hope to see you there!
     </p>
-    
+
     <p>Best,<br><br>
     Sean and Satchel
     </p>

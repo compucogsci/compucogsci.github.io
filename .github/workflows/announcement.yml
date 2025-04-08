@@ -3,7 +3,7 @@ name: Send Presentation Announcement Email
 on:
   schedule:
     # Run mondays at 10 AM PDT
-    - cron: '0 17 * * 1'
+    #- cron: '0 17 * * 1'
   workflow_dispatch: # Allows manual triggering for testing
 
 jobs:
