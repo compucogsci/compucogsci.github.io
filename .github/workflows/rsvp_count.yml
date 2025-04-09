@@ -1,0 +1,149 @@
+name: RSVP Count Notification
+
+on:
+  schedule:
+    # Run every Monday at 11:30 AM PT (18:30 UTC during standard time, 19:30 UTC during daylight saving time)
+    # Using 18:30 UTC which will be 11:30 AM PT during standard time (winter) and 10:30 AM PT during DST
+    #- cron: '30 18 * * 1'
+  workflow_dispatch: # Allow manual triggering for testing
+
+jobs:
+  check-upcoming-meeting:
+    runs-on: ubuntu-latest
+    environment: github actions
+    outputs:
+      has_meeting: ${{ steps.check-meeting.outputs.has_meeting }}
+      meeting_date: ${{ steps.check-meeting.outputs.meeting_date }}
+      meeting_title: ${{ steps.check-meeting.outputs.meeting_title }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Check for meeting this week
+        id: check-meeting
+        run: |
+          # Get current date and end of week (Sunday)
+          TODAY=$(date +%Y-%m-%d)
+          END_OF_WEEK=$(date -d "next Sunday" +%Y-%m-%d)
+          
+          # Read presentations.json and look for meetings between today and Sunday
+          MEETING_THIS_WEEK=$(node -e "
+            const fs = require('fs');
+            const presentations = JSON.parse(fs.readFileSync('./presentations.json', 'utf8'));
+            const today = new Date('${TODAY}');
+            const endOfWeek = new Date('${END_OF_WEEK}');
+            
+            const upcomingMeeting = presentations.find(p => {
+              const meetingDate = new Date(p.date);
+              return meetingDate >= today && meetingDate <= endOfWeek;
+            });
+            
+            if (upcomingMeeting) {
+              console.log('true');
+              console.log(upcomingMeeting.date);
+              console.log(upcomingMeeting.title);
+            } else {
+              console.log('false');
+              console.log('');
+              console.log('');
+            }
+          ")
+          
+          # Read the output lines
+          HAS_MEETING=$(echo "$MEETING_THIS_WEEK" | sed -n '1p')
+          MEETING_DATE=$(echo "$MEETING_THIS_WEEK" | sed -n '2p')
+          MEETING_TITLE=$(echo "$MEETING_THIS_WEEK" | sed -n '3p')
+          
+          echo "has_meeting=$HAS_MEETING" >> $GITHUB_OUTPUT
+          echo "meeting_date=$MEETING_DATE" >> $GITHUB_OUTPUT
+          echo "meeting_title=$MEETING_TITLE" >> $GITHUB_OUTPUT
+          
+          echo "Has meeting this week: $HAS_MEETING"
+          echo "Meeting date: $MEETING_DATE"
+          echo "Meeting title: $MEETING_TITLE"
+
+  count-rsvps:
+    needs: check-upcoming-meeting
+    if: needs.check-upcoming-meeting.outputs.has_meeting == 'true'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        working-directory: .github/scripts
+        run: npm install
+      
+      - name: Run RSVP count script
+        id: rsvp-count
+        env:
+          GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}
+          SHEET_ID: ${{ secrets.SHEET_ID }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
+        run: node .github/scripts/rsvp_count.js
+      
+      # Check if notification issue already exists
+      - name: Check for existing notification issue
+        if: ${{ steps.rsvp-count.outputs.email_failed == 'true' }}
+        id: check-issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: ['notification-failure']
+            });
+            
+            if (issues.data.length > 0) {
+              console.log('Existing notification failure issue found');
+              return true;
+            }
+            console.log('No existing notification failure issue');
+            return false;
+          result-encoding: string
+      
+      # Fallback to GitHub issue if email fails and no existing issue
+      - name: Create GitHub Issue for notification failure
+        if: ${{ steps.rsvp-count.outputs.email_failed == 'true' && steps.check-issue.outputs.result == 'false' }}
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const title = 'Email Notification System Failure';
+            const body = `
+            The email notification system is failing to send emails.
+            
+            Please check the following:
+            1. The Gmail credentials in GitHub secrets
+            2. Whether the app password is still valid
+            3. Gmail sending limits or restrictions
+            
+            Latest attempt was for: ${process.env.MEETING_TITLE} (${process.env.MEETING_DATE})
+            RSVP Count: ${process.env.RSVP_COUNT}
+            
+            Once fixed, please close this issue.
+            `;
+            
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['notification-failure', 'bug']
+            });
+        env:
+          MEETING_TITLE: ${{ needs.check-upcoming-meeting.outputs.meeting_title }}
+          MEETING_DATE: ${{ needs.check-upcoming-meeting.outputs.meeting_date }}
+          RSVP_COUNT: ${{ steps.rsvp-count.outputs.rsvp_count }}

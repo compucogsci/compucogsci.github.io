@@ -1,0 +1,94 @@
+name: Generate Business Purpose Email
+
+on:
+  schedule:
+    # Run every Wednesday at 10:00 AM PT (17:00 UTC during standard time, 18:00 UTC during daylight saving time)
+    # temporarily disable
+    #- cron: '0 17 * * 3'
+  workflow_dispatch: # Allow manual triggering for testing
+
+jobs:
+  generate-business-purpose:
+    runs-on: ubuntu-latest
+    environment: github actions
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        working-directory: .github/scripts
+        run: npm install
+      
+      - name: Run business purpose script
+        id: business-purpose
+        env:
+          GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}
+          SHEET_ID: ${{ secrets.SHEET_ID }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
+        run: node .github/scripts/business_purpose.js
+      
+      # Check if notification issue already exists
+      - name: Check for existing notification issue
+        if: ${{ steps.business-purpose.outputs.email_failed == 'true' }}
+        id: check-issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: ['notification-failure']
+            });
+            
+            if (issues.data.length > 0) {
+              console.log('Existing notification failure issue found');
+              return true;
+            }
+            console.log('No existing notification failure issue');
+            return false;
+          result-encoding: string
+      
+      # Fallback to GitHub issue if email fails and no existing issue
+      - name: Create GitHub Issue for notification failure
+        if: ${{ steps.business-purpose.outputs.email_failed == 'true' && steps.check-issue.outputs.result == 'false' }}
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const title = 'Email Notification System Failure';
+            const body = `
+            The email notification system is failing to send emails.
+            
+            Please check the following:
+            1. The Gmail credentials in GitHub secrets
+            2. Whether the app password is still valid
+            3. Gmail sending limits or restrictions
+            
+            Latest attempt was for the business purpose email:
+            Meeting: ${process.env.MEETING_TITLE} (${process.env.MEETING_DATE})
+            Attendee count: ${process.env.ATTENDEE_COUNT}
+            
+            Once fixed, please close this issue.
+            `;
+            
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['notification-failure', 'bug']
+            });
+        env:
+          MEETING_TITLE: ${{ steps.business-purpose.outputs.meeting_title }}
+          MEETING_DATE: ${{ steps.business-purpose.outputs.meeting_date }}
+          ATTENDEE_COUNT: ${{ steps.business-purpose.outputs.attendee_count }}

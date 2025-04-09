@@ -1,0 +1,85 @@
+name: Send Presentation Announcement Email
+
+on:
+  schedule:
+    # Run mondays at 10 AM PDT
+    #- cron: '0 17 * * 1'
+  workflow_dispatch: # Allows manual triggering for testing
+
+jobs:
+  check-and-send:
+    runs-on: ubuntu-latest
+    environment: github actions
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      
+      - name: Install dependencies
+        working-directory: .github/scripts
+        run: npm install
+      
+      - name: Run reminder script
+        id: send-announcement
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
+          GOOGLE_FORM_BASE_URL: ${{ secrets.GOOGLE_FORM_BASE_URL }}
+        run: node .github/scripts/send_announcement.js
+      
+      # Check if notification issue already exists if the email fails
+      - name: Check for existing notification issue
+        if: ${{ failure() }}
+        id: check-issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: ['notification-failure']
+            });
+            
+            if (issues.data.length > 0) {
+              console.log('Existing notification failure issue found');
+              return true;
+            }
+            console.log('No existing notification failure issue');
+            return false;
+          result-encoding: string
+          
+      # Create GitHub issue if email fails and no existing issue exists
+      - name: Create GitHub Issue for notification failure
+        if: ${{ failure() && steps.check-issue.outputs.result == 'false' }}
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const title = 'Email Notification System Failure';
+            const body = `
+            The email notification system is failing to send emails.
+            
+            Please check the following:
+            1. The Gmail credentials in GitHub secrets
+            2. Whether the app password is still valid
+            3. Gmail sending limits or restrictions
+            
+            This was detected in the presentation announcement workflow.
+            
+            Once fixed, please close this issue.
+            `;
+            
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['notification-failure', 'bug']
+            });
