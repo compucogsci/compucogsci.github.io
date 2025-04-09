@@ -21,21 +21,44 @@ function generateBusinessPurposeEmail(meeting, formattedNamesList) {
   });
 
   return {
-    subject: `Business Purpose: ${meeting.title} (${formattedDate})`,
+    subject: `CompCogSci Journal Club reimbursement (${formattedDate})`,
     body: `
-Dear Reimbursement Team,
+<html>
+<body>
+  <p>Hi,</p>
 
-I am writing to provide the business purpose for the CompuCogSci reading group meeting held on ${formattedDate}. 
+  <p>
+  Could you help me get our latest food order ($AMOUNT) for CompCogSci Reading Group reimbursed?
+  We'd like to use this account: ACCOUNT.
+  The receipt is in the forwarded email below.
+  </p>
 
-The meeting was attended by ${formattedNamesList}. During this meeting, we discussed "${meeting.title}" presented by ${meeting.presenter}.
+  <p>
+  Here is a list of the attendees:
+  ${formattedNamesList}
+  </p>
 
-The meeting's academic purpose was to discuss recent research in computational cognitive science, specifically focusing on ${meeting.summary || "topics related to cognitive modeling and computational approaches to understanding the mind"}.
+  <p>
+  Here is a draft business purpose (let me know if this is helpful):
+  </p>
 
-Please let me know if you need any additional information for the reimbursement process.
+  <p>
+  <strong>WHO:</strong> Sean Anderson, grad student in the department of Psychology.
+  <strong>WHAT:</strong> Dinner for ${names.length} PhD students and research staff in the Department of Psychology Computational Cognitive Science Reading Group.
+  <strong>WHERE:</strong> Dominos.
+  <strong>WHEN:</strong> ${formattedDate}.
+  <strong>WHY:</strong> Reviewing and discussing past and present research in cognitive science in service of ongoing and future research projects.
+  Participants: ${formattedNamesList}.
+  PTA ACCOUNT will be used for this expense.
+  </p>
 
-Thank you,
-[Your Name]
-    `.trim()
+  <p>
+  Thank you,
+  <br><br>
+  Sean Anderson
+  </p>
+</body>
+</html>`.trim()
   };
 }
 
@@ -71,8 +94,8 @@ async function run() {
     
     console.log('Generated business purpose email:');
     console.log(`Subject: ${emailContent.subject}`);
-    console.log('Body:');
-    console.log(emailContent.body);
+    //console.log('Body:');
+    //console.log(emailContent.body);
     
     // Set outputs for GitHub Actions
     core.setOutput('meeting_title', recentMeeting.title);
