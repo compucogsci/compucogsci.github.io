@@ -102,13 +102,14 @@ async function run() {
     core.setOutput('meeting_date', recentMeeting.date);
     core.setOutput('attendee_count', attendees.length);
     
-    // Send email with Gmail
+    // Send email with Gmail - add true flag to indicate HTML content
     const success = await utils.sendEmail(
       GMAIL_USER,
       GMAIL_APP_PASSWORD,
       NOTIFICATION_EMAIL,
       emailContent.subject,
-      emailContent.body
+      emailContent.body,
+      true
     );
     
     if (!success) {
