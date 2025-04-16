@@ -11,7 +11,7 @@ const NOTIFICATION_EMAIL = process.env.NOTIFICATION_EMAIL || GMAIL_USER;
 /**
  * Generate the business purpose draft email
  */
-function generateBusinessPurposeEmail(meeting, formattedNamesList) {
+function generateBusinessPurposeEmail(meeting, formattedNamesList, names) {
   // Format the date more formally for the business purpose email
   const meetingDate = new Date(meeting.date);
   const formattedDate = meetingDate.toLocaleDateString('en-US', {
@@ -90,7 +90,7 @@ async function run() {
     const formattedNamesList = utils.formatNamesList(names);
     
     // Generate the business purpose email content
-    const emailContent = generateBusinessPurposeEmail(recentMeeting, formattedNamesList);
+    const emailContent = generateBusinessPurposeEmail(recentMeeting, formattedNamesList, names);
     
     console.log('Generated business purpose email:');
     console.log(`Subject: ${emailContent.subject}`);
