@@ -128,7 +128,7 @@ async function formatPaperInfo(presentation) {
           const metadata = await doiUtils.getAPACitationFromDOI(doi);
           if (metadata && metadata.title) {
             paperTitle = metadata.title;
-            // Create short citation (Author, Year) format
+            // Create short citation (Author, Year) format - now using the authors field with last names only
             paperShortAPACite = metadata.authors && metadata.year ?
               `(${metadata.authors}, ${metadata.year})` : '';
           }
