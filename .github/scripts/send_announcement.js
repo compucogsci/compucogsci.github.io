@@ -190,11 +190,30 @@ async function sendReminderEmail() {
   const additionalPapersText = hasMultiplePapers ?
     ' Additional papers can be found on our website.' : '';
 
-  const emailSubject = `[compcogsci] Next meeting ${formattedDate}: ${title} with ${presenter}`;
+  // Format the date for the subject line (without year)
+  const dateForSubject = date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  const emailSubject = `[compcogsci] Next meeting ${dateForSubject}: ${title} with ${presenter}`;
+
+  // Base font style
+  const fontFamily = '"Source Sans 3", "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
 
   const emailBody = `
   <html>
-  <body>
+  <head>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&display=swap');
+      body, p, strong, a, span {
+        font-family: ${fontFamily};
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body style="font-family: ${fontFamily}; font-size: 14px;">
     <p>Hello all!</p>
 
     <p>
