@@ -89,7 +89,17 @@ jobs:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
-        run: node .github/scripts/rsvp_count.js
+        run: |
+          # Debug environment without revealing secret values
+          echo "Checking if credentials are available..."
+          if [ -z "$GOOGLE_SHEETS_CREDENTIALS" ]; then
+            echo "::error::GOOGLE_SHEETS_CREDENTIALS is empty or not set"
+          else
+            echo "GOOGLE_SHEETS_CREDENTIALS is set (value not shown for security)"
+          fi
+
+          # Run the script
+          node .github/scripts/rsvp_count.js
 
       # Check if notification issue already exists
       - name: Check for existing notification issue

@@ -1,8 +1,32 @@
 const core = require('@actions/core');
 const utils = require('./utils');
 
-// Read credentials from environment variables or GitHub secrets
-const CREDENTIALS = JSON.parse(process.env.GOOGLE_SHEETS_CREDENTIALS);
+// Improved logging for credentials parsing
+let CREDENTIALS;
+try {
+  if (!process.env.GOOGLE_SHEETS_CREDENTIALS) {
+    throw new Error('GOOGLE_SHEETS_CREDENTIALS environment variable is missing or empty');
+  }
+
+  // Log credential length for debugging (not the actual content)
+  console.log(`GOOGLE_SHEETS_CREDENTIALS length: ${process.env.GOOGLE_SHEETS_CREDENTIALS.length} characters`);
+
+  // Add extra check to see if the credentials string starts with { and ends with }
+  const credStr = process.env.GOOGLE_SHEETS_CREDENTIALS.trim();
+  if (!credStr.startsWith('{') || !credStr.endsWith('}')) {
+    console.warn('Warning: GOOGLE_SHEETS_CREDENTIALS does not appear to be a valid JSON object');
+    console.log(`First few characters: ${credStr.substring(0, 5)}...`);
+    console.log(`Last few characters: ...${credStr.substring(credStr.length - 5)}`);
+  }
+
+  CREDENTIALS = JSON.parse(process.env.GOOGLE_SHEETS_CREDENTIALS);
+  console.log('Successfully parsed GOOGLE_SHEETS_CREDENTIALS');
+} catch (error) {
+  console.error('Failed to parse GOOGLE_SHEETS_CREDENTIALS:', error.message);
+  core.setFailed(`Error parsing credentials: ${error.message}`);
+  process.exit(1);
+}
+
 const SHEET_ID = process.env.SHEET_ID;
 const GMAIL_USER = process.env.GMAIL_USER;
 const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
@@ -19,6 +43,10 @@ async function getUniqueRsvpCount() {
     }
 
     console.log(`Processing RSVPs for meeting on ${upcomingMeeting.date}: ${upcomingMeeting.title}`);
+
+    // Get a Google Sheets client
+    const sheets = utils.getGoogleSheetsClient(CREDENTIALS);
+    console.log('Successfully created Google Sheets client');
 
     // Get RSVP count from the latest date in the form
     const rsvpResult = await utils.getLatestRsvpCount(CREDENTIALS, SHEET_ID);
