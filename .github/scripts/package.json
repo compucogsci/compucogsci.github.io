@@ -1,17 +1,18 @@
 {
-  "name": "compucogsci-workflows",
+  "name": "compucogsci-automation-scripts",
   "version": "1.0.0",
-  "description": "Scripts for CompuCogSci GitHub workflows",
-  "private": true,
-  "dependencies": {
-    "@actions/core": "^1.10.0",
-    "axios": "^1.3.6",
-    "googleapis": "^118.0.0",
-    "nodemailer": "^6.9.1",
-    "node-fetch": "^2.6.9",
-    "xmldom": "^0.7.6"
-  },
+  "description": "Automation scripts for the CompCogSci reading group website",
+  "main": "index.js",
   "scripts": {
-    "test:dates": "node test_dates.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "googleapis": "^100.0.0",
+    "node-fetch": "^2.6.7",
+    "nodemailer": "^6.7.5",
+    "xmldom": "^0.6.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
