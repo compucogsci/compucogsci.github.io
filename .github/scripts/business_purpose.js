@@ -1,4 +1,15 @@
-const core = require('@actions/core');
+let core;
+try {
+  core = require('@actions/core');
+} catch (error) {
+  // Provide fallback implementation for local testing
+  core = {
+    setOutput: (name, value) => console.log(`[Output] ${name}: ${value}`),
+    setFailed: (message) => console.log(`[Failed] ${message}`)
+  };
+  console.log('Running in local mode (without @actions/core)');
+}
+
 const utils = require('./utils');
 
 // Read credentials from environment variables or GitHub secrets
