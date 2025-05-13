@@ -267,10 +267,17 @@
         }]
     },
     {
-        "title": "TBD",
-        "presenter": "Nastasia Klevak",
+        "title": "Social attachment: a computational perspective",
+        "presenter": "Xi Jia Zhou",
         "date": "2025-05-20",
         "summary": "TBD",
-        "links": []
+        "links": [{
+            "text": "A computational perspective on social attachment",
+            "url": "https://doi.org/10.1016/j.infbeh.2018.12.001"
+        },
+        {
+            "text": "Cittern et al., (2018)",
+            "url": "https://doi.org/10.1371/journal.pone.0193955"
+        }]
     }
 ]
