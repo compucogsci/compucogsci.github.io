@@ -67,6 +67,7 @@ jobs:
     needs: check-upcoming-meeting
     if: needs.check-upcoming-meeting.outputs.has_meeting == 'true'
     runs-on: ubuntu-latest
+    environment: github actions
 
     steps:
       - name: Checkout code
