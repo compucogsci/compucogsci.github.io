@@ -1,23 +1,33 @@
-// This script loads presentation data from JSON and makes it available globally
+// This script loads presentation data and config from JSON and makes it available globally
 
 let presentations = []; // Initialize empty array
+let config = {}; // Initialize empty config object
 
-// Function to load the presentation data
-async function loadPresentations() {
+// Function to load all data
+async function loadData() {
   try {
-    const response = await fetch('presentations.json');
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+    const [presentationsResponse, configResponse] = await Promise.all([
+      fetch('presentations.json'),
+      fetch('config.json')
+    ]);
+
+    if (!presentationsResponse.ok) {
+      throw new Error(`HTTP error! Status: ${presentationsResponse.status}`);
     }
-    presentations = await response.json();
-    
+    if (!configResponse.ok) {
+      throw new Error(`HTTP error! Status: ${configResponse.status}`);
+    }
+
+    presentations = await presentationsResponse.json();
+    config = await configResponse.json();
+
     // Dispatch an event when data is loaded
-    const event = new Event('presentationsLoaded');
+    const event = new Event('dataLoaded');
     document.dispatchEvent(event);
   } catch (error) {
-    console.error('Error loading presentations data:', error);
+    console.error('Error loading data:', error);
   }
 }
 
 // Load the data when the script is executed
-loadPresentations();
+loadData();

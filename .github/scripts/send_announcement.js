@@ -3,6 +3,23 @@ const path = require('path');
 const utils = require('./utils');
 const doiUtils = require('./doi_utils');
 
+// Load config data
+function loadConfig() {
+  try {
+    const configPath = path.join(process.cwd(), 'config.json');
+    const configData = fs.readFileSync(configPath, 'utf8');
+    return JSON.parse(configData);
+  } catch (error) {
+    console.error('Error loading config:', error);
+    // Return default values as fallback
+    return {
+      meetingTime: '3pm-5pm',
+      meetingLocation: 'Room 358 in Building 420',
+      timeZone: 'PT'
+    };
+  }
+}
+
 // Environment variables
 const GMAIL_USER = process.env.GMAIL_USER;
 const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
@@ -163,6 +180,9 @@ async function sendReminderEmail() {
 
   console.log(`Found upcoming presentation by ${upcomingPresentation.presenter}`);
 
+  // Load config data
+  const config = loadConfig();
+
   // Get formatted paper info
   const { paperLink, paperTitle, paperShortAPACite, hasMultiplePapers } =
     await formatPaperInfo(upcomingPresentation);
@@ -218,7 +238,7 @@ async function sendReminderEmail() {
 
     <p>
     The next meeting of the Computational Cognitive Science Reading Group will occur on
-     <strong>${formattedDate}</strong>, from 3-5pm PT in Room 358 of Building 420.
+     <strong>${formattedDate}</strong>, from ${config.meetingTime} ${config.timeZone} in ${config.meetingLocation}.
      ${googleFormSentence}
      All members of the Stanford research community are welcome to the meeting.
     </p>

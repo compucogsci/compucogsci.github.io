@@ -7,13 +7,34 @@ document.addEventListener('DOMContentLoaded', function() {
     // If data is already loaded, initialize
     if (presentations && presentations.length > 0) {
         filterPresentations('future');
+        updateScheduleHeader();
     } else {
         // Otherwise wait for data to load
-        document.addEventListener('presentationsLoaded', function() {
+        document.addEventListener('dataLoaded', function() {
             filterPresentations('future');
+            updateScheduleHeader();
         });
     }
 });
+
+function updateScheduleHeader() {
+    // Update schedule page header with config data
+    const scheduleTimeElement = document.getElementById('schedule-meeting-time');
+    const scheduleTimeZoneElement = document.getElementById('schedule-time-zone');
+    const scheduleLocationElement = document.getElementById('schedule-meeting-location');
+
+    if (scheduleTimeElement && config.meetingTime) {
+        scheduleTimeElement.textContent = config.meetingTime;
+    }
+
+    if (scheduleTimeZoneElement && config.timeZone) {
+        scheduleTimeZoneElement.textContent = config.timeZone;
+    }
+
+    if (scheduleLocationElement && config.meetingLocation) {
+        scheduleLocationElement.textContent = config.meetingLocation;
+    }
+}
 
 function formatDate(dateStr) {
     // Create date with specific time (3pm PT) to ensure correct day
@@ -34,10 +55,10 @@ function formatDate(dateStr) {
 function displayPresentations(list) {
     const table = document.getElementById('presentations');
     table.innerHTML = '';
- 
+
     const sortedAndFiltered = filterAndSortPresentations(list, currentFilter, ascending);
     sortedAndFiltered.forEach(presentation => {
-        const linkHTML = presentation.links.map(link => 
+        const linkHTML = presentation.links.map(link =>
             `<a href="${link.url}" target="_blank">${link.text}</a>`
         ).join(', ');
 
