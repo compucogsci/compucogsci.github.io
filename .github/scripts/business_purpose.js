@@ -55,8 +55,8 @@ function generateBusinessPurposeEmail(meeting, formattedNamesList, names) {
 
   <p>
   <strong>WHO:</strong> Sean Anderson, grad student in the department of Psychology.
-  <strong>WHAT:</strong> Dinner for ${names.length} PhD students and research staff in the Department of Psychology Computational Cognitive Science Reading Group.
-  <strong>WHERE:</strong> Dominos.
+  <strong>WHAT:</strong> Snacks for ${names.length} PhD students and research staff in the Department of Psychology Computational Cognitive Science Reading Group.
+  <strong>WHERE:</strong> TODO.
   <strong>WHEN:</strong> ${formattedDate}.
   <strong>WHY:</strong> Reviewing and discussing past and present research in cognitive science in service of ongoing and future research projects.
   Participants: ${formattedNamesList}.

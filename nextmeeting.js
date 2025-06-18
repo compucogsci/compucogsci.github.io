@@ -12,15 +12,15 @@ function findNextMeeting() {
 
     if (todayPresentation) {
         if (nextPresentation) {
-            const nextDate = new Date(nextPresentation.date + 'T18:00:00-07:00');
+            const nextDate = new Date(nextPresentation.date + 'T15:00:00-07:00');
             const options = { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'America/Los_Angeles' };
-            return `Our next meeting is today at 6pm PT, and the following one will be on ${nextDate.toLocaleDateString('en-US', options)}.`;
+            return `Our next meeting is today at 3pm PT, and the following one will be on ${nextDate.toLocaleDateString('en-US', options)}.`;
         }
-        return 'Our next meeting is today at 6pm PT.';
+        return 'Our next meeting is today at 3pm PT.';
     }
 
     if (nextPresentation) {
-        const date = new Date(nextPresentation.date + 'T18:00:00-07:00');
+        const date = new Date(nextPresentation.date + 'T15:00:00-07:00');
         const options = { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'America/Los_Angeles' };
         return `Our next meeting is on ${date.toLocaleDateString('en-US', options)}.`;
     }

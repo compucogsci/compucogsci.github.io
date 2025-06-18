@@ -218,7 +218,7 @@ async function sendReminderEmail() {
 
     <p>
     The next meeting of the Computational Cognitive Science Reading Group will occur on
-     <strong>${formattedDate}</strong>, from 6-8pm PT in Room 358 of Building 420.
+     <strong>${formattedDate}</strong>, from 3-5pm PT in Room 358 of Building 420.
      ${googleFormSentence}
      All members of the Stanford research community are welcome to the meeting.
     </p>
@@ -240,7 +240,7 @@ async function sendReminderEmail() {
     </p>
 
     <p>Best,<br><br>
-    Sean and Satchel
+    Adani, Jerome, and Sean
     </p>
   </body>
   </html>

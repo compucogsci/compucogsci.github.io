@@ -16,8 +16,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function formatDate(dateStr) {
-    // Create date with specific time (6pm PT) to ensure correct day
-    const date = new Date(dateStr + 'T18:00:00-07:00');
+    // Create date with specific time (3pm PT) to ensure correct day
+    const date = new Date(dateStr + 'T15:00:00-07:00');
     const options = {
         weekday: 'long',
         month: 'long',
