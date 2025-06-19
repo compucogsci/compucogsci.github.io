@@ -22,7 +22,7 @@ Automatically counts unique RSVP submissions for upcoming meetings.
 - `SHEET_ID`: ID of your Google Sheet containing RSVPs
 - `GMAIL_USER`: Gmail address to send notifications from
 - `GMAIL_APP_PASSWORD`: App password for Gmail
-- `NOTIFICATION_EMAIL`: Email to receive notifications (optional, defaults to GMAIL_USER)
+- `NOTIFICATION_EMAILS`: Comma-separated list of email addresses to receive notifications (e.g., `email1@example.com,email2@example.com,email3@example.com`). Optional, defaults to GMAIL_USER if not provided.
 
 **Files:**
 - `.github/scripts/rsvp_count.js`: Main script for counting RSVPs
@@ -41,7 +41,7 @@ Sends announcement emails for upcoming reading group presentations.
 **Required Secrets:**
 - `GMAIL_USER`: Gmail address to send from
 - `GMAIL_APP_PASSWORD`: App password for Gmail
-- `NOTIFICATION_EMAIL`: Email address to send announcements to (optional, defaults to GMAIL_USER)
+- `NOTIFICATION_EMAILS`: Comma-separated list of email addresses to receive announcements (e.g., `email1@example.com,email2@example.com,email3@example.com`). Optional, defaults to GMAIL_USER if not provided.
 - `GOOGLE_FORM_BASE_URL`: Base URL for the RSVP Google Form (will have the meeting date appended in YYYY-MM-DD format)
 
 **Files:**
@@ -65,7 +65,7 @@ Automatically generates a business purpose email for reimbursement processes aft
 - `SHEET_ID`: ID of your Google Sheet containing RSVPs
 - `GMAIL_USER`: Gmail address to send from
 - `GMAIL_APP_PASSWORD`: App password for Gmail
-- `NOTIFICATION_EMAIL`: Email to receive the business purpose email (optional, defaults to GMAIL_USER)
+- `NOTIFICATION_EMAILS`: Comma-separated list of email addresses to receive business purpose emails (e.g., `email1@example.com,email2@example.com,email3@example.com`). Optional, defaults to GMAIL_USER if not provided.
 
 **Files:**
 - `.github/scripts/business_purpose.js`: Script for generating the business purpose emails
@@ -85,6 +85,17 @@ Note: The system can handle dates in various formats including:
 - YYYY-MM-DD (e.g., "2025-04-01")
 
 ## Setup Instructions
+
+### Notification Email Recipients
+
+The `NOTIFICATION_EMAILS` secret supports sending emails to multiple recipients. Format it as a comma-separated list of email addresses:
+
+**Examples:**
+- Single recipient: `sean@example.com`
+- Multiple recipients: `sean@example.com,alice@example.com,bob@example.com`
+- With spaces (will be trimmed): `sean@example.com, alice@example.com, bob@example.com`
+
+**Note:** If `NOTIFICATION_EMAILS` is not set, the system will fall back to using `GMAIL_USER` as the recipient. The old `NOTIFICATION_EMAIL` secret is still supported for backward compatibility but will be deprecated in favor of `NOTIFICATION_EMAILS`.
 
 ### Secret Management
 

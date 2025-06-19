@@ -23,7 +23,7 @@ function loadConfig() {
 // Environment variables
 const GMAIL_USER = process.env.GMAIL_USER;
 const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
-const NOTIFICATION_EMAIL = process.env.NOTIFICATION_EMAIL || GMAIL_USER;
+const NOTIFICATION_EMAILS = process.env.NOTIFICATION_EMAILS || process.env.NOTIFICATION_EMAIL || GMAIL_USER;
 const GOOGLE_FORM_BASE_URL = process.env.GOOGLE_FORM_BASE_URL;
 
 // Find the next upcoming presentation within the coming week
@@ -267,7 +267,7 @@ async function sendReminderEmail() {
   `;
 
   // Send the email using the utility function (with isHtml=true)
-  return await utils.sendEmail(GMAIL_USER, GMAIL_APP_PASSWORD, NOTIFICATION_EMAIL, emailSubject, emailBody, true);
+  return await utils.sendEmail(GMAIL_USER, GMAIL_APP_PASSWORD, NOTIFICATION_EMAILS, emailSubject, emailBody, true);
 }
 
 // Run the main function

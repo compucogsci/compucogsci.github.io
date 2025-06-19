@@ -32,7 +32,7 @@ jobs:
           SHEET_ID: ${{ secrets.SHEET_ID }}
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-          NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
+          NOTIFICATION_EMAILS: ${{ secrets.NOTIFICATION_EMAILS }}
         run: node .github/scripts/business_purpose.js
       
       # Check if notification issue already exists

@@ -84,15 +84,32 @@ function createGmailTransporter(gmailUser, gmailAppPassword) {
 }
 
 /**
- * Send an email using Gmail
+ * Send an email using Gmail to multiple recipients
  */
-async function sendEmail(gmailUser, gmailAppPassword, recipient, subject, content, isHtml = false) {
+async function sendEmail(gmailUser, gmailAppPassword, recipients, subject, content, isHtml = false) {
   try {
     const transporter = createGmailTransporter(gmailUser, gmailAppPassword);
 
+    // Handle multiple recipients - split by comma and trim whitespace
+    let recipientList;
+    if (typeof recipients === 'string') {
+      recipientList = recipients.split(',').map(email => email.trim()).filter(email => email.length > 0);
+    } else if (Array.isArray(recipients)) {
+      recipientList = recipients;
+    } else {
+      recipientList = [gmailUser]; // Fallback to sender
+    }
+
+    // If no valid recipients, fallback to sender
+    if (recipientList.length === 0) {
+      recipientList = [gmailUser];
+    }
+
+    console.log(`Sending email to ${recipientList.length} recipient(s): ${recipientList.join(', ')}`);
+
     const mailOptions = {
       from: gmailUser,
-      to: recipient || gmailUser,
+      to: recipientList.join(', '),
       subject: subject,
     };
 

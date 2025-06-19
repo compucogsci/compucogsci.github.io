@@ -28,7 +28,7 @@ jobs:
         env:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-          NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
+          NOTIFICATION_EMAILS: ${{ secrets.NOTIFICATION_EMAILS }}
           GOOGLE_FORM_BASE_URL: ${{ secrets.GOOGLE_FORM_BASE_URL }}
         run: node .github/scripts/send_announcement.js
       

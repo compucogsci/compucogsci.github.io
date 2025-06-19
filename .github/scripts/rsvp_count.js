@@ -30,7 +30,7 @@ try {
 const SHEET_ID = process.env.SHEET_ID;
 const GMAIL_USER = process.env.GMAIL_USER;
 const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
-const NOTIFICATION_EMAIL = process.env.NOTIFICATION_EMAIL || GMAIL_USER;
+const NOTIFICATION_EMAILS = process.env.NOTIFICATION_EMAILS || process.env.NOTIFICATION_EMAIL || GMAIL_USER;
 
 async function getUniqueRsvpCount() {
   try {
@@ -97,7 +97,7 @@ async function sendRsvpCountEmail(result) {
     RSVP date in spreadsheet: ${result.date}
   `;
 
-  return await utils.sendEmail(GMAIL_USER, GMAIL_APP_PASSWORD, NOTIFICATION_EMAIL, emailSubject, emailContent);
+  return await utils.sendEmail(GMAIL_USER, GMAIL_APP_PASSWORD, NOTIFICATION_EMAILS, emailSubject, emailContent);
 }
 
 // Export for GitHub Actions

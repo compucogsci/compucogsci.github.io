@@ -17,7 +17,7 @@ const GOOGLE_SHEETS_CREDENTIALS = JSON.parse(process.env.GOOGLE_SHEETS_CREDENTIA
 const SHEET_ID = process.env.SHEET_ID;
 const GMAIL_USER = process.env.GMAIL_USER;
 const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
-const NOTIFICATION_EMAIL = process.env.NOTIFICATION_EMAIL || GMAIL_USER;
+const NOTIFICATION_EMAILS = process.env.NOTIFICATION_EMAILS || process.env.NOTIFICATION_EMAIL || GMAIL_USER;
 
 /**
  * Generate the business purpose draft email
@@ -117,7 +117,7 @@ async function run() {
     const success = await utils.sendEmail(
       GMAIL_USER,
       GMAIL_APP_PASSWORD,
-      NOTIFICATION_EMAIL,
+      NOTIFICATION_EMAILS,
       emailContent.subject,
       emailContent.body,
       true

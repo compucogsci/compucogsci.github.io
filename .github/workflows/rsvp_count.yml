@@ -89,7 +89,7 @@ jobs:
           SHEET_ID: ${{ secrets.SHEET_ID }}
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-          NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
+          NOTIFICATION_EMAILS: ${{ secrets.NOTIFICATION_EMAILS }}
         run: |
           # Debug environment without revealing secret values
           echo "Checking if credentials are available..."
