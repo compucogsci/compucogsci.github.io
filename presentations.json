@@ -321,16 +321,6 @@
         }]
     },
     {
-        "title": "Comparing cooperative geometric puzzle solving in ants versus humans",
-        "presenter": "Ke Fang",
-        "date": "2025-09-02",
-        "summary": "TBD",
-        "links": [{
-            "text": "Comparing cooperative geometric puzzle solving in ants versus humans",
-            "url": "https://doi.org/10.1073/pnas.2414274121"
-        }]
-    },
-    {
         "title": "TBD",
         "presenter": "Lynde Folsom",
         "date": "2025-09-16",
@@ -348,6 +338,16 @@
         "links": [{
             "text": "TBD",
             "url": "TBD"
+        }]
+    },
+    {
+        "title": "Comparing cooperative geometric puzzle solving in ants versus humans",
+        "presenter": "Ke Fang",
+        "date": "2025-10-14",
+        "summary": "TBD",
+        "links": [{
+            "text": "Comparing cooperative geometric puzzle solving in ants versus humans",
+            "url": "https://doi.org/10.1073/pnas.2414274121"
         }]
     }
 ]
