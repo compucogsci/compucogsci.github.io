@@ -349,5 +349,15 @@
             "text": "Comparing cooperative geometric puzzle solving in ants versus humans",
             "url": "https://doi.org/10.1073/pnas.2414274121"
         }]
+    },
+    {
+        "title": "Addressing divergent representations from causal interventions on neural networks",
+        "presenter": "Satchel Grant",
+        "date": "2026-9-4",
+        "summary": "Satchel, Jerome, and Alexa's own work!",
+        "links": [{
+            "text": "Grant, Han, Tartaglini, & Potts (2026)",
+            "url": "https://doi.org/10.48550/arXiv.2511.04638"
+        }]
     }
 ]
