@@ -240,13 +240,13 @@ async function sendReminderEmail() {
     The next meeting of the Computational Cognitive Science Reading Group will occur on
      <strong>${formattedDate}</strong>, from ${config.meetingTime} ${config.timeZone} in ${config.meetingLocation}.
      ${googleFormSentence}
-     All members of the Stanford research community are welcome to the meeting.
+     All members of the Stanford research community are welcome.
     </p>
 
     <p>
     This session will be led by <strong>${presenter}</strong> on
      <a href="${paperLink}">"${paperTitle}" ${paperShortAPACite}</a>.
-     We ask that everyone attending attempt to read the paper to be discussed before the meeting.
+     We ask that everyone attending attempt to read the paper (i.e. at least the abstract) before the meeting.
     ${additionalPapersText}
     </p>
 
@@ -260,7 +260,7 @@ async function sendReminderEmail() {
     </p>
 
     <p>Best,<br><br>
-    Adani, Jerome, and Sean
+    Sean
     </p>
   </body>
   </html>
