@@ -1,6 +1,6 @@
 // Fix imports
 const fetch = require('node-fetch');
-const { DOMParser } = require('xmldom');
+const { DOMParser } = require('@xmldom/xmldom');
 
 /**
  * Get paper metadata from a DOI
