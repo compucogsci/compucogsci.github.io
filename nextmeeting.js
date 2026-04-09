@@ -1,14 +1,22 @@
 function findNextMeeting() {
     const now = new Date();
-    const today = now.toISOString().split('T')[0];
-
-    // Find today's presentation and the next one
-    const todayPresentation = presentations.find(p => p.date === today);
-    const nextPresentation = presentations.find(p => {
-        const presDate = new Date(p.date);
-        presDate.setHours(0, 0, 0, 0);
-        return presDate > now;
+    const todayFormatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/Los_Angeles',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
     });
+    const todayParts = todayFormatter.formatToParts(now).reduce((parts, part) => {
+        if (part.type !== 'literal') {
+            parts[part.type] = part.value;
+        }
+        return parts;
+    }, {});
+    const today = `${todayParts.year}-${todayParts.month}-${todayParts.day}`;
+
+    // Find today's presentation and the next one using Pacific time.
+    const todayPresentation = presentations.find(p => p.date === today);
+    const nextPresentation = presentations.find(p => p.date > today);
 
     const timeInfo = config.meetingTime ? ` at ${config.meetingTime.split('-')[0]} ${config.timeZone}` : ' at 3pm PT';
 
