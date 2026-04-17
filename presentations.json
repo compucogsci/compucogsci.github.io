@@ -371,6 +371,16 @@
         }]
     },
     {
+        "title": "Abstract cognitive maps of social network structure aid adaptive inference",
+        "presenter": "Ke Fang",
+        "date": "2026-05-01",
+        "summary": "",
+        "links": [{
+            "text": "Son, Bhandari, & Feldman-Hall (2023)",
+            "url": "https://doi.org/10.1073/pnas.2310801120"
+        }]
+    },
+    {
         "title": "Perturbation: A simple and efficient adversarial tracer for representation learning in language models",
         "presenter": "Josh Rozner",
         "date": "2026-05-07",
