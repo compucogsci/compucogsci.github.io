@@ -399,5 +399,15 @@
             "text": "TBA",
             "url": ""
         }]
+    },
+    {
+        "title": "How Linguistics Learned to Stop Worrying and Love the Language Models",
+        "presenter": "Daniel Wurgaft",
+        "date": "2026-05-29",
+        "summary": "",
+        "links": [{
+            "text": "Futrell & Mahowald (2025)",
+            "url": "https://doi.org/10.1017/S0140525X2510112X"
+        }]
     }
 ]
