@@ -14,7 +14,7 @@ function findNextMeeting() {
     }, {});
     const today = `${todayParts.year}-${todayParts.month}-${todayParts.day}`;
 
-    const sortedPresentations = [...presentations].sort((a, b) => a.date.localeCompare(b.date));
+    const sortedPresentations = [...presentations].sort((a, b) => new Date(a.date) - new Date(b.date));
 
     // Find today's presentation and the next one using Pacific time.
     const todayPresentation = sortedPresentations.find(p => p.date === today);
