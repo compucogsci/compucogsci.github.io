@@ -14,9 +14,11 @@ function findNextMeeting() {
     }, {});
     const today = `${todayParts.year}-${todayParts.month}-${todayParts.day}`;
 
+    const sortedPresentations = [...presentations].sort((a, b) => new Date(a.date) - new Date(b.date));
+
     // Find today's presentation and the next one using Pacific time.
-    const todayPresentation = presentations.find(p => p.date === today);
-    const nextPresentation = presentations.find(p => p.date > today);
+    const todayPresentation = sortedPresentations.find(p => p.date === today);
+    const nextPresentation = sortedPresentations.find(p => p.date > today);
 
     const timeInfo = config.meetingTime ? ` at ${config.meetingTime.split('-')[0]} ${config.timeZone}` : ' at 3pm PT';
 
