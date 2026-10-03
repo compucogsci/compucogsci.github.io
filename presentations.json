@@ -409,5 +409,20 @@
             "text": "Futrell & Mahowald (2025)",
             "url": "https://doi.org/10.1017/S0140525X2510112X"
         }]
+    },
+    {
+        "title": "Have we built machines that learn and think like people?",
+        "presenter": "Jerome Han",
+        "date": "2026-10-16",
+        "summary": "See announcement for summary. If you've already read the BBS 2016 paper, try the 2026 one!",
+        "links": [{
+            "text": "Lake et al. 2016",
+            "url": "https://doi.org/10.48550/arXiv.1604.00289"
+            },
+            {
+                "text": "Summerfield & Stachenfield, 2026",
+                "url": "https://doi.org/10.1016/j.neuron.2026.08.013"
+            }
+        ]
     }
 ]
