@@ -1,0 +1,51 @@
+# TreeHouse combined-order pipeline settings.
+# Read by .github/scripts/treehouse/prepare_orders.js and verify_cart.js.
+# CLI flags to treehouse_prep.sh (--session-date, --pickup-time, --cost-limit) override these per run.
+
+site_url: https://treehouse.toast.site/order/ordertreehouse
+
+timezone: America/Los_Angeles
+
+# Look this many days ahead (inclusive of today) in presentations.json for the next session.
+search_window_days: 7
+
+# Local time of day to schedule pickup. Meetings start at noon (config.json).
+pickup_time: "11:45"
+
+# Per-person limit, pre-tax and pre-tip. INCLUSIVE: an order of exactly 14.50 passes.
+cost_limit_usd: 14.50
+
+# What goes in each cart item's special-instructions field.
+# "initials" -> e.g. "SA" (collisions become "SA-2", "SA-3"). Names never leave the repo-side step.
+label_format: initials
+
+# Exact headers in the RSVP Google Sheet (row 1). Matched after trimming whitespace.
+sheet:
+  range: "A:Z"
+  columns:
+    timestamp: "Timestamp"
+    email: "Email Address"
+    session_date: "You are RSVP'ing for our meeting on:"
+    first_name: "First name:"
+    surname: "Surname:"
+    order: "In the event we do order individual meals from TreeHouse, what would you like from TreeHouse ($14.50 limit before tax)? Please specify all options for your order."
+    diet: "report dietary restrictions here:"
+    has_diet: "Do you have any dietary restrictions?"
+    attending: "Will you be attending? only in person is supported currently."
+    wants_lunch: "Do you want lunch?"
+
+# Menu groups/items the browser agent must never pick from.
+menu_exclusions:
+  menus:
+    - Catering
+    - Cinco de Mayo
+    - DO NOT REMOVE Appfront Items
+    - Merchandise
+  group_name_prefixes:
+    - Catering
+  items_in_sides:
+    - Open Item
+    - Taco Tuesday
+    - Taco Tuesday Margarita
+    - Thursday Trivia in the Arbor
+    - Friday Live Music

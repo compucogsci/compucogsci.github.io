@@ -1,2 +1,13 @@
 .DS_Store
 
+node_modules/
+
+# TreeHouse order pipeline: RSVP-derived payloads and cart results never go in git.
+# Only the empty runs/cowork_downloads/ folder is tracked (via .gitkeep).
+runs/*
+!runs/cowork_downloads/
+runs/cowork_downloads/*
+!runs/cowork_downloads/.gitkeep
+
+# Planning notes (contain real order text)
+offline/

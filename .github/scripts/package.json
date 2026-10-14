@@ -4,14 +4,15 @@
   "description": "Automation scripts for the CompCogSci reading group website",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test treehouse/test/"
   },
   "dependencies": {
     "@actions/core": "^1.10.0",
     "@xmldom/xmldom": "^0.9.8",
     "googleapis": "^100.0.0",
     "node-fetch": "^2.6.7",
-    "nodemailer": "^8.0.4"
+    "nodemailer": "^8.0.4",
+    "yaml": "^2.5.1"
   },
   "engines": {
     "node": ">=16.0.0"

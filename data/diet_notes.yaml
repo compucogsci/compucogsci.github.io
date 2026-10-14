@@ -1,0 +1,29 @@
+# Human-confirmed ingredient facts for TreeHouse items, used by the treehouse-cart skill
+# when it checks dietary restrictions. The menu doesn't list these, so fill them in after
+# asking TreeHouse (650-723-4500). Use: yes | no | unknown.
+#
+# This file can't cover cross-contamination. Severe allergies always need a call to the restaurant.
+
+- item: Mexican Rice
+  vegetarian: unknown   # meat/chicken stock?
+  vegan: unknown
+  source: ""
+  confirmed_on: ""
+
+- item: Pinto Beans
+  vegetarian: unknown   # lard?
+  vegan: unknown
+  source: ""
+  confirmed_on: ""
+
+- item: Black Beans
+  vegetarian: unknown
+  vegan: unknown
+  source: ""
+  confirmed_on: ""
+
+- item: Saffron Basmati Rice (Indian entrées)
+  vegetarian: unknown
+  vegan: unknown
+  source: ""
+  confirmed_on: ""
