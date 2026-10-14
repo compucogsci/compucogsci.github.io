@@ -105,7 +105,7 @@ async function sendEmail(gmailUser, gmailAppPassword, recipients, subject, conte
       recipientList = [gmailUser];
     }
 
-    console.log(`Sending email to ${recipientList.length} recipient(s): ${recipientList.join(', ')}`);
+    console.log(`Sending email to ${recipientList.length} recipient(s)`);
 
     const mailOptions = {
       from: gmailUser,
